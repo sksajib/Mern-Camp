@@ -5,11 +5,12 @@ import { Modal } from "antd";
 import Link from "next/link";
 
 const Register = () => {
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [question, setQuestion] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [secret, setSecret] = useState("");
+  const [question, setQuestion] = useState("");
   const [ok, setOk] = useState(false);
   const [image, setImage] = useState();
   const saveImage = async (e) => {
@@ -20,6 +21,7 @@ const Register = () => {
       toast.error(err);
     }
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -29,10 +31,24 @@ const Register = () => {
           name,
           email,
           password,
+          confirmPassword,
           question,
           secret,
         }
       );
+      // if (data.ok) {
+      //   setName("");
+      //   setEmail("");
+      //   setPassword("");
+      //   setQuestion("");
+      //   setSecret("");
+      // }
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+      setQuestion("");
+      setSecret("");
       setOk(data.ok);
     } catch (err) {
       toast.error(err.response.data);
@@ -134,6 +150,39 @@ const Register = () => {
             </div>
             <div className="form-group py-2">
               <small>
+                <label className="text-muted py-2">Confirm Your Password</label>
+              </small>
+              <input
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                type="password"
+                autoComplete="new-password"
+                className="form-control"
+                placeholder="Confirm password"
+              />
+              <small>
+                <label
+                  className="text-muted py-2"
+                  hidden={true}
+                  style={{ color: "red" }}
+                >
+                  Password Doesn't Match
+                </label>
+              </small>
+              <small>
+                <label
+                  className="text-muted py-2"
+                  hidden={true}
+                  style={{
+                    color: "green",
+                  }}
+                >
+                  Password Matched
+                </label>
+              </small>
+            </div>
+            <div className="form-group py-2">
+              <small>
                 <label className="text-muted py-2">Pick a question</label>
               </small>
               <select
@@ -160,7 +209,18 @@ const Register = () => {
               />
             </div>
             <div className="d-grid gap-5 md-3 py-3">
-              <button type="submit" className="btn btn-success ">
+              <button
+                disabled={
+                  !name ||
+                  !email ||
+                  !password ||
+                  !question ||
+                  !secret ||
+                  !confirmPassword
+                }
+                type="submit"
+                className="btn btn-success "
+              >
                 Sign Up
               </button>
             </div>
