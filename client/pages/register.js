@@ -1,6 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { Modal } from "antd";
+import Link from "next/link";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -159,6 +161,21 @@ const Register = () => {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col">
+          <Modal
+            title="Congratulations!"
+            open={ok}
+            onCancel={() => setOk(false)}
+            footer={null}
+          >
+            <p>You have Successfully Registered</p>
+            <Link href="/login" className="btn btn-primary btn-sm">
+              Login
+            </Link>
+          </Modal>
         </div>
       </div>
     </div>
