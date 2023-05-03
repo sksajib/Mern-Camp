@@ -1,42 +1,82 @@
 import { useState } from "react";
 import axios from "axios";
-
+import { toast } from "react-toastify";
 const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [question, setQuestion] = useState("");
   const [secret, setSecret] = useState("");
-  const handleSubmit = (e) => {
+  const [ok, setOk] = useState(false);
+  const [image, setImage] = useState();
+  const saveImage = async (e) => {
     e.preventDefault();
-    axios
-      .post("http://localhost:3031/api/register", {
+    try {
+      console.log(e.target.files[0]);
+    } catch (err) {
+      toast.error(err);
+    }
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post("http://localhost:3031/api/register", {
         name,
         email,
         password,
         question,
         secret,
-      })
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
+      });
+      setOk(data.ok);
+    } catch (err) {
+      toast.error(err.response.data);
+    }
+    // axios
+    //   .post("http://localhost:3031/api/register", {
+    //     name,
+    //     email,
+    //     password,
+    //     question,
+    //     secret,
+    //   })
+    //   .then((res) => console.log(res.data.ok))
+    //   .catch((err) => toast.error(err.response.data));
   };
   return (
     <div className="container-fluid container">
-      <div className="row  bg-secondary  text-light text-center">
-        <div className="col text-center ">
-          <div className="display-6 text-center">Registration Page</div>
+      <div className="row py-3 bg-secondary text-light">
+        <div className="col text-center">
+          <h5 className="display-7 text-center">Registration page</h5>
         </div>
       </div>
       <div className="row py-4">
         <div
-          className=" col py-3  text-center text-light overflow-hidden"
-          style={{ height: "500px" }}
+          className=" col py-3  text-center text-light overflow-auto"
+          style={{ height: "460px" }}
         >
           <img src="/images/sajib.jpeg" alt="image" />
+          <form onSubmit={saveImage}>
+            <div className="form-group py-2 text-center">
+              <small>
+                <label className="text-muted py-2">Choose a Picture</label>
+              </small>
+              <input
+                type="File"
+                onChange={(e) => setImage(e.target.files[0])}
+                className="form-control"
+                accept=".png,.jpg,.jpeg"
+              />
+            </div>
+            <div className="d-grid gap-5 md-3 py-3">
+              <button type="submit" className="btn btn-success ">
+                Upload Image
+              </button>
+            </div>
+          </form>
         </div>
         <div
           className="col  py-3 overflow-auto  text-light card"
-          style={{ height: "500px" }}
+          style={{ height: "460px" }}
         >
           <form onSubmit={handleSubmit}>
             <div className="form-group py-1 text-center">
@@ -55,6 +95,7 @@ const Register = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 type="text"
+                autoComplete="username"
                 className="form-control"
                 placeholder="Enter name"
               />
@@ -67,6 +108,7 @@ const Register = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
+                autoComplete="email"
                 className="form-control"
                 placeholder="Enter Email"
               />
@@ -79,6 +121,7 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 type="password"
+                autoComplete="new-password"
                 className="form-control"
                 placeholder="Enter password"
               />

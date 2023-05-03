@@ -9,15 +9,23 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$"
+    ]
+  },
   "keywords": [],
   "author": "Sajib Saha",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/icons": "^5.0.1",
+    "antd": "^5.4.6",
     "axios": "^1.4.0",
     "bootstrap": "^5.2.3",
     "next": "^13.3.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.11.0"
+    "react-router-dom": "^6.11.0",
+    "react-toastify": "^9.1.2"
   }
 }
