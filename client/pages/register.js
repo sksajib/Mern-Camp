@@ -93,15 +93,9 @@ const Register = () => {
                 onChange={(e) => setQuestion(e.target.value)}
               >
                 <option>Select a question</option>
-                <option value={"What is Your favourite Color?"}>
-                  What is Your favourite Color?
-                </option>
-                <option value={"What is Your best friend's name?"}>
-                  What is Your best friend's name?
-                </option>
-                <option value={"What city you are born?"}>
-                  What city you are born?
-                </option>
+                <option value={"1"}>What is Your favourite Color?</option>
+                <option value={"2"}>What is Your best friend's name?</option>
+                <option value={"3"}>What city you are born?</option>
               </select>
               <small className="form-text text-muted py-2">
                 You can use this to reset this password
