@@ -32,7 +32,7 @@ const Register = () => {
           className=" col py-3  text-center text-light overflow-hidden"
           style={{ height: "500px" }}
         >
-          <img src="/images/purba.jpeg" alt="image" />
+          <img src="/images/sajib.jpeg" alt="image" />
         </div>
         <div
           className="col  py-3 overflow-auto  text-light card"
