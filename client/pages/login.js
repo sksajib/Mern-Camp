@@ -12,10 +12,10 @@ const Login = () => {
       </div>
       <div class="row">
         <div class="col py-3 bg-primary text-center text-light">
-          <img src="/images/purba.jpeg" alt="image" />
+          <img src="/images/sajib.jpeg" alt="image" />
         </div>
         <div class="col py-3 bg-dark text-center text-light">
-          <img src="/images/purba.jpeg" alt="image" />
+          <img src="/images/sajib.jpeg" alt="image" />
         </div>
       </div>
     </div>
