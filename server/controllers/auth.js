@@ -5,6 +5,7 @@ const data = async (req, res) => {
 
   let { name, email, password, question, secret } = req.body;
   const nameC = name.replaceAll(/\s+/g, " ");
+  const secretC = secret.replaceAll(/\s+/g, " ");
 
   //validation
   if (!nameC || nameC == " ") return res.status(400).send("Name is required");
@@ -16,7 +17,8 @@ const data = async (req, res) => {
         "Password is required and should be minimum 8 characters & maximum 64 characters long"
       );
   if (!question) return res.status(400).send("Select a question");
-  if (!secret) return res.status(400).send("Answer is required");
+  if (!secretC || secretC == " ")
+    return res.status(400).send("Answer is required");
   const nameClean = nameC.charAt(0).toUpperCase();
   const len = name.length;
   const name2 = nameC.substring(1, len + 1);
