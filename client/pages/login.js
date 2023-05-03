@@ -6,15 +6,15 @@ const Login = () => {
           <h5 className="display-7 text-center">Login page</h5>
         </div>
       </div>
-      <div class="row">
-        <div class="col py-3 bg-primary text-center text-light">Column</div>
-        <div class="col py-3 bg-dark text-center text-light">Column</div>
+      <div className="row">
+        <div className="col py-3 bg-primary text-center text-light">Column</div>
+        <div className="col py-3 bg-dark text-center text-light">Column</div>
       </div>
-      <div class="row">
-        <div class="col py-3 bg-primary text-center text-light">
+      <div className="row">
+        <div className="col py-3 bg-primary text-center text-light">
           <img src="/images/sajib.jpeg" alt="image" />
         </div>
-        <div class="col py-3 bg-dark text-center text-light">
+        <div className="col py-3 bg-dark text-center text-light">
           <img src="/images/sajib.jpeg" alt="image" />
         </div>
       </div>
