@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css";
 import "../public/css/style.css";
+import MyNavbar from "../components/nav2";
 function MyApp({ Component, pageProps }) {
   return (
     <>

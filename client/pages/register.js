@@ -3,16 +3,19 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { Modal } from "antd";
 import Link from "next/link";
-
+import AuthForm from "../components/forms/AuthForm";
 const Register = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [secret, setSecret] = useState("");
+  const [name, setName] = useState("Sajib");
+  const [email, setEmail] = useState("sajibsaha@gmail.com");
+  const [password, setPassword] = useState("11111111");
+  const [confirmPassword, setConfirmPassword] = useState("11111111");
+  const [secret, setSecret] = useState("red");
   const [question, setQuestion] = useState("");
   const [ok, setOk] = useState(false);
   const [image, setImage] = useState();
+  const [loading, setLoading] = useState(false);
+  const buttonValue = "Sign Up";
+  const formName = "Registration Form";
   const saveImage = async (e) => {
     e.preventDefault();
     try {
@@ -25,6 +28,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setLoading(true);
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API}/register`,
         {
@@ -36,13 +40,8 @@ const Register = () => {
           secret,
         }
       );
-      // if (data.ok) {
-      //   setName("");
-      //   setEmail("");
-      //   setPassword("");
-      //   setQuestion("");
-      //   setSecret("");
-      // }
+      //for clearing the input after successfull registration
+      setLoading(false);
       setName("");
       setEmail("");
       setPassword("");
@@ -51,32 +50,29 @@ const Register = () => {
       setSecret("");
       setOk(data.ok);
     } catch (err) {
+      setLoading(false);
       toast.error(err.response.data);
     }
-    // axios
-    //   .post("http://localhost:3031/api/register", {
-    //     name,
-    //     email,
-    //     password,
-    //     question,
-    //     secret,
-    //   })
-    //   .then((res) => console.log(res.data.ok))
-    //   .catch((err) => toast.error(err.response.data));
   };
+  // if (loading)
+  //   return (
+  //     <div className="container-fluid container text-center">
+  //       <h4>Loading...</h4>
+  //     </div>
+  //   );
   return (
     <div className="container-fluid container">
-      <div className="row py-3 bg-secondary text-light">
+      <div className="row py-3 bg-default-img text-dark">
         <div className="col text-center">
-          <h5 className="display-7 text-center">Registration page</h5>
+          <h2>Registration page</h2>
         </div>
       </div>
-      <div className="row py-4">
+      <div className="row py-4 bg-default-img2 text-light">
         <div
           className=" col py-3  text-center text-light overflow-auto"
           style={{ height: "460px" }}
         >
-          <img src="/images/sajib.jpeg" alt="image" />
+          <img src="/images/sajib.jpeg" alt="image" width={"400"} />
           <form onSubmit={saveImage}>
             <div className="form-group py-2 text-center">
               <small>
@@ -97,134 +93,27 @@ const Register = () => {
           </form>
         </div>
         <div
-          className="col  py-3 overflow-auto  text-light card"
+          className="col  py-3 overflow-auto bg-form-img card"
           style={{ height: "460px" }}
         >
-          <form onSubmit={handleSubmit}>
-            <div className="form-group py-1 text-center">
-              <label
-                className="text-muted font-weight-bold py-1 text-center"
-                style={{ fontWeight: "bold", fontSize: "large" }}
-              >
-                Registration Form
-              </label>
-            </div>
-            <div className="form-group py-2">
-              <small>
-                <label className="text-muted py-2">Your Name</label>
-              </small>
-              <input
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                type="text"
-                autoComplete="username"
-                className="form-control"
-                placeholder="Enter name"
-              />
-            </div>
-            <div className="form-group py-2">
-              <small>
-                <label className="text-muted py-2">Your Email</label>
-              </small>
-              <input
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                type="email"
-                autoComplete="email"
-                className="form-control"
-                placeholder="Enter Email"
-              />
-            </div>
-            <div className="form-group py-2">
-              <small>
-                <label className="text-muted py-2">Your Password</label>
-              </small>
-              <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                type="password"
-                autoComplete="new-password"
-                className="form-control"
-                placeholder="Enter password"
-              />
-            </div>
-            <div className="form-group py-2">
-              <small>
-                <label className="text-muted py-2">Confirm Your Password</label>
-              </small>
-              <input
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                type="password"
-                autoComplete="new-password"
-                className="form-control"
-                placeholder="Confirm password"
-              />
-              <small>
-                <label
-                  className="text-muted py-2"
-                  hidden={true}
-                  style={{ color: "red" }}
-                >
-                  Password Doesn't Match
-                </label>
-              </small>
-              <small>
-                <label
-                  className="text-muted py-2"
-                  hidden={true}
-                  style={{
-                    color: "green",
-                  }}
-                >
-                  Password Matched
-                </label>
-              </small>
-            </div>
-            <div className="form-group py-2">
-              <small>
-                <label className="text-muted py-2">Pick a question</label>
-              </small>
-              <select
-                className="form-control py-2"
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-              >
-                <option>Select a question</option>
-                <option value={"1"}>What is Your favourite Color?</option>
-                <option value={"2"}>What is Your best friend's name?</option>
-                <option value={"3"}>What city you are born?</option>
-              </select>
-              <small className="form-text text-muted py-2">
-                You can use this to reset this password
-              </small>
-            </div>
-            <div className="form-group py-3">
-              <input
-                value={secret}
-                onChange={(e) => setSecret(e.target.value)}
-                type="text"
-                className="form-control"
-                placeholder="Write Your Answer Here"
-              />
-            </div>
-            <div className="d-grid gap-5 md-3 py-3">
-              <button
-                disabled={
-                  !name ||
-                  !email ||
-                  !password ||
-                  !question ||
-                  !secret ||
-                  !confirmPassword
-                }
-                type="submit"
-                className="btn btn-success "
-              >
-                Sign Up
-              </button>
-            </div>
-          </form>
+          <AuthForm
+            formName={formName}
+            handleSubmit={handleSubmit}
+            name={name}
+            setName={setName}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+            setConfirmPassword={setConfirmPassword}
+            question={question}
+            setQuestion={setQuestion}
+            secret={secret}
+            setSecret={setSecret}
+            loading={loading}
+            buttonValue={buttonValue}
+          />
         </div>
       </div>
       <div className="row">
@@ -240,6 +129,31 @@ const Register = () => {
               Login
             </Link>
           </Modal>
+        </div>
+      </div>
+      <div className="row">
+        <div className="col"></div>
+        <div className="col py-4">
+          <div className="row py-3  text-light">
+            <div className="col ">
+              <div
+                className="d-inline p-2"
+                style={{ fontSize: "25px", color: "red" }}
+              >
+                Already Registered?
+              </div>
+              <div className="d-inline p-2">
+                <Link href="#" className="  btn  btn-primary btn-lg">
+                  Forgot Password!
+                </Link>
+              </div>
+              <div className="d-inline p-2">
+                <Link href="/login" className=" btn btn-primary btn-lg">
+                  Login
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
