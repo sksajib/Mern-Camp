@@ -25,7 +25,11 @@ const Login = () => {
         }
       );
       //for clearing the input after successfull registration
-      router.push("/");
+      //router.push("/");
+      setLoading(false);
+      console.log(data.user.email);
+      setEmail(data.user.email);
+      toast.success(`welcome ${email}`);
     } catch (err) {
       setLoading(false);
       toast.error(err.response.data);
