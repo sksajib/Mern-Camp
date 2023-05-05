@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { Modal } from "antd";
 import Link from "next/link";
 import AuthForm from "../components/forms/AuthForm";
 import { useRouter } from "next/router";
+import { UserContext } from "../context";
 const Login = () => {
   const [email, setEmail] = useState("sajibsaha@gmail.com");
   const [password, setPassword] = useState("11111111");
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [state, setState] = useContext(UserContext);
   const buttonValue = "Login";
   const router = useRouter();
 
@@ -26,10 +27,14 @@ const Login = () => {
       );
       //for clearing the input after successfull registration
       //router.push("/");
+      setState({
+        user: data.user,
+        token: data.token,
+      });
+      window.localStorage.setItem("auth", JSON.stringify(data));
       setLoading(false);
-      console.log(data.user.email);
-      setEmail(data.user.email);
       toast.success(`welcome ${email}`);
+      router.push("/");
     } catch (err) {
       setLoading(false);
       toast.error(err.response.data);
