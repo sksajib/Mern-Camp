@@ -8,8 +8,8 @@ const UserRoute = ({ children }) => {
   const [state] = useContext(UserContext);
   const router = useRouter();
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    if (state && state.token) getCurrentUser();
+  }, [state && state.token]);
   const getCurrentUser = async () => {
     try {
       const { data } = await axios.get(
@@ -31,7 +31,7 @@ const UserRoute = ({ children }) => {
       className="d-flex justify-content-center display-1 text-primary p-5"
     />
   ) : (
-    { children }
+    <>{children}</>
   );
 };
 export default UserRoute;

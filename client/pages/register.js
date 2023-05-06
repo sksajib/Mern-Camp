@@ -69,7 +69,7 @@ const Register = () => {
   //       <h4>Loading...</h4>
   //     </div>
   //   );
-  if (state && state.token) router.push("/");
+  if (state && state.token) router.push("/user/dashboard");
   if (state === null) {
     return (
       <div className="container-fluid container">

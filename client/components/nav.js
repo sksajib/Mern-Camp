@@ -5,19 +5,39 @@ import { useContext, useEffect, useState } from "react";
 
 const Nav = () => {
   const [state, setState] = useContext(UserContext);
-  const [current, setCurrent] = useState("");
+  const [current, setCurrent] = useState(state);
   const router = useRouter();
+  ///const channel = new BroadcastChannel("my-channel");
+
   //console.log(window.location.pathname);
   useEffect(() => {
     console.log("Current =>", router.pathname);
+    //console.log(state);
+    //setCurrent(state);
+    // console.log(current);
+    const event = new Event("stateUpdate");
+    window.dispatchEvent(event);
   }, [router.pathname]);
+
+  useEffect(() => {
+    const handleStateUpdate = () => {
+      setState(JSON.parse(window.localStorage.getItem("auth")));
+    };
+    window.addEventListener("stateUpdate", handleStateUpdate);
+    return () => {
+      window.removeEventListener("stateUpdate", handleStateUpdate);
+    };
+  }, []);
 
   const isActive = (href) => {
     return router.pathname === href ? "active" : "";
   };
+
   const logout = () => {
     window.localStorage.removeItem("auth");
     setState(null);
+    setCurrent(state);
+    //console.log(current);
     router.push("/login");
   };
 
