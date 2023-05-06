@@ -20,14 +20,11 @@ const Register = () => {
   const formName = "Registration Form";
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
-  useEffect(() => {
-    console.log(state);
-    state !== null && state.token !== "" && router.push("/");
-  }, [state]);
   // useEffect(() => {
-  //   state === null && router.push("/");
-  // }, []);
-  // console.log(state);
+  //   console.log(state);
+  //   state !== null && state.token !== "" && router.push("/");
+  // }, [state]);
+
   const saveImage = async (e) => {
     e.preventDefault();
     try {
@@ -72,6 +69,7 @@ const Register = () => {
   //       <h4>Loading...</h4>
   //     </div>
   //   );
+  if (state && state.token) router.push("/");
   if (state === null) {
     return (
       <div className="container-fluid container">
