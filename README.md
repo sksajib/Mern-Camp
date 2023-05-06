@@ -6,6 +6,11 @@
     Change the port of client  : Go to package.json file
                                  Search for <set PORT:3030>
                                  change 3030 to the desired port or for default port just delete <set PORT:3030 &&>
+    Create a file in root of the client folder <.env.local> and edit :
+                                   NEXT_PUBLIC_API=http://localhost:3031/api 
+                                   change the port 3031 to the specific server side port
+                                   
+    
                            
                            
 # Server
