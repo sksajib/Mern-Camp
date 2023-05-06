@@ -7,6 +7,7 @@ import "antd/dist/reset.css";
 import "../public/css/style.css";
 import { UserProvider } from "../context";
 import MyNavbar from "../components/nav2";
+
 function MyApp({ Component, pageProps }) {
   return (
     <UserProvider>

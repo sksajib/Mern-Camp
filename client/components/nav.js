@@ -1,19 +1,26 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { UserContext } from "../context";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
+
 const Nav = () => {
+  const [state, setState] = useContext(UserContext);
+  const [current, setCurrent] = useState("");
   const router = useRouter();
+  //console.log(window.location.pathname);
+  useEffect(() => {
+    console.log("Current =>", router.pathname);
+  }, [router.pathname]);
 
   const isActive = (href) => {
     return router.pathname === href ? "active" : "";
   };
-  const [state, setState] = useContext(UserContext);
   const logout = () => {
     window.localStorage.removeItem("auth");
     setState(null);
     router.push("/login");
   };
+
   return (
     <nav
       className="nav sticky-top justify-content-center container"
@@ -59,11 +66,19 @@ const Nav = () => {
         </>
       )}
       {state !== null && (
-        <div className="nav-link text-light">
-          <a onClick={logout}>
-            <h2>Logout</h2>
-          </a>
-        </div>
+        <>
+          <Link
+            href="/user/dashboard"
+            className={`nav-link text-light ${isActive("/user/dashboard")}`}
+          >
+            <h2>{state && state.user && state.user.name}</h2>
+          </Link>
+          <div className="nav-link text-light">
+            <a onClick={logout}>
+              <h2>Logout</h2>
+            </a>
+          </div>
+        </>
       )}
     </nav>
   );

@@ -30,6 +30,7 @@ nav {
   border-radius: 35px;
   border-color: aqua;
   text-shadow: 2px 5px 5px #e759d0;
+  cursor: pointer;
 }
 .active {
   background-color: rgb(15, 11, 221);
