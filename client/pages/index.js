@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "../context";
 const Home = () => {
-  const [state, useState] = useContext(UserContext);
+  const [state, setState] = useContext(UserContext);
   return (
     <div className="container justify-content-center text-center">
       <div className="row">
