@@ -12,6 +12,7 @@ const register = async (req, res) => {
   //validation
   if (!nameC || nameC == " ") return res.status(400).send("Name is required");
   if (!email) return res.status(400).send("Email is required");
+  const emailUpper = email.toUpperCase();
   if (!passC || passC.length < 8)
     return res
       .status(400)
@@ -38,16 +39,17 @@ const register = async (req, res) => {
   const len = name.length;
   const name2 = nameC.substring(1, len + 1);
   name = nameClean + name2;
-  const exist = await User.findOne({ email });
+  const secretUpper = secretC.toUpperCase();
+  const exist = await User.findOne({ emailUpper });
   if (exist) return res.status(400).send("Email is taken");
   //hash password
   const hashedPassword = await hashPassword(password);
   const user = new User({
     name,
-    email,
+    email: emailUpper,
     password: hashedPassword,
     question,
-    secret,
+    secret: secretUpper,
   });
   try {
     await user.save();
@@ -63,7 +65,8 @@ const login = async (req, res) => {
   try {
     //
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const emailUpper = email.toUpperCase();
+    const user = await User.findOne({ email: emailUpper });
     if (!user) return res.status(400).send("no user found");
     const match = await comparePassword(password, user.password);
     if (!match) return res.status(400).send("wrong password");
@@ -110,7 +113,9 @@ const forgotPassword = async (req, res) => {
     if (!question) return res.status(400).send("Select a question");
     if (!secretC || secretC == " ")
       return res.status(400).send("Answer is required");
-    const exist = await User.findOne({ email });
+    const emailUpper = email.toUpperCase();
+    console.log(emailUpper);
+    const exist = await User.findOne({ email: emailUpper });
     if (!exist) return res.status(400).send("Please Enter Valid mail");
     if (exist) {
       //return res.status(200).send("User Found");
@@ -125,12 +130,13 @@ const forgotPassword = async (req, res) => {
         if (!questionMatch)
           return res.status(400).send("Select correct question");
         if (questionMatch) {
-          const secretMatch = secretC === exist.secret;
+          const secretUpper = secretC.toUpperCase();
+          const secretMatch = secretUpper === exist.secret;
           if (!secretMatch)
             return res.status(400).send("Give the Secret Answer Correctly");
           if (secretMatch) {
             const ok = await User.updateOne(
-              { email },
+              { email: emailUpper },
               { password: hashedPassword }
             );
             return res.status(200).send("Password Updated Successfully");
