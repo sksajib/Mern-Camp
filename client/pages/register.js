@@ -6,6 +6,7 @@ import Link from "next/link";
 import AuthForm from "../components/forms/AuthForm";
 import { UserContext } from "../context";
 import { useRouter } from "next/router";
+import UserRoute from "../components/routes/UserRoute";
 const Register = () => {
   const [name, setName] = useState("Sajib");
   const [email, setEmail] = useState("sajibsaha@gmail.com");
@@ -20,154 +21,136 @@ const Register = () => {
   const formName = "Registration Form";
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
+
   // useEffect(() => {
   //   console.log(state);
   //   state !== null && state.token !== "" && router.push("/");
   // }, [state]);
 
-  const saveImage = async (e) => {
-    e.preventDefault();
-    try {
-      console.log(e.target.files[0]);
-    } catch (err) {
-      toast.error(err);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/register`,
-        {
+    setLoading(true);
+    const auth = JSON.parse(window.localStorage.getItem("auth"));
+
+    if (auth && auth.token) {
+      setLoading(false);
+      router.push("/user/dashboard");
+    } else {
+      try {
+        setLoading(true);
+        const { data } = await axios.post(`/register`, {
           name,
           email,
           password,
           confirmPassword,
           question,
           secret,
-        }
-      );
-      //for clearing the input after successfull registration
-      setLoading(false);
-      setName("");
-      setEmail("");
-      setPassword("");
-      setConfirmPassword("");
-      setQuestion("");
-      setSecret("");
-      setOk(data.ok);
-    } catch (err) {
-      setLoading(false);
-      toast.error(err.response.data);
+        });
+        //for clearing the input after successfull registration
+        setLoading(false);
+        setName("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setQuestion("");
+        setSecret("");
+        setOk(data.ok);
+      } catch (err) {
+        setLoading(false);
+      }
     }
   };
-  // if (loading)
-  //   return (
-  //     <div className="container-fluid container text-center">
-  //       <h4>Loading...</h4>
-  //     </div>
-  //   );
+
   if (state && state.token) router.push("/user/dashboard");
   if (state === null) {
     return (
-      <div className="container-fluid container">
-        <div className="row py-3 bg-default-img text-dark">
-          <div className="col text-center">
-            <h2>Registration page</h2>
+      <UserRoute>
+        <div className="container-fluid container">
+          <div className="row py-3 bg-default-img text-dark">
+            <div className="col text-center">
+              <h2>Registration page</h2>
+            </div>
           </div>
-        </div>
-        <div className="row py-4 bg-default-img2 text-light">
-          <div
-            className=" col py-3  text-center text-light overflow-auto"
-            style={{ height: "460px" }}
-          >
-            <img src="/images/sajib.jpeg" alt="image" width={"400"} />
-            <form onSubmit={saveImage}>
-              <div className="form-group py-2 text-center">
-                <small>
-                  <label className="text-muted py-2">Choose a Picture</label>
-                </small>
-                <input
-                  type="File"
-                  onChange={(e) => setImage(e.target.files[0])}
-                  className="form-control"
-                  accept=".png,.jpg,.jpeg"
-                />
-              </div>
-              <div className="d-grid gap-5 md-3 py-3">
-                <button type="submit" className="btn btn-success ">
-                  Upload Image
-                </button>
-              </div>
-            </form>
-          </div>
-          <div
-            className="col  py-3 overflow-auto bg-form-img card"
-            style={{ height: "460px" }}
-          >
-            <AuthForm
-              formName={formName}
-              handleSubmit={handleSubmit}
-              name={name}
-              setName={setName}
-              email={email}
-              setEmail={setEmail}
-              password={password}
-              setPassword={setPassword}
-              confirmPassword={confirmPassword}
-              setConfirmPassword={setConfirmPassword}
-              question={question}
-              setQuestion={setQuestion}
-              secret={secret}
-              setSecret={setSecret}
-              loading={loading}
-              buttonValue={buttonValue}
-            />
-          </div>
-        </div>
-        <div className="row">
-          <div className="col">
-            <Modal
-              title="Congratulations!"
-              open={ok}
-              onCancel={() => setOk(false)}
-              footer={null}
+          <div className="row py-4 bg-default-img2 text-dark">
+            <div
+              className=" col-5 py-3  text-center text-light "
+              style={{ height: "460px" }}
             >
-              <p>You have Successfully Registered</p>
-              <Link href="/login" className="btn btn-primary btn-sm">
-                Login
-              </Link>
-            </Modal>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col"></div>
-          <div className="col py-4">
-            <div className="row py-3  text-light">
-              <div className="col ">
+              <img src="/images/Unite.png" alt="image" width={"250"} />
+            </div>
+            <div className="col-7  py-2">
+              <div className="row">
+                {" "}
                 <div
-                  className="d-inline p-2"
-                  style={{ fontSize: "25px", color: "red" }}
+                  style={{ height: "360px", width: "580px", padding: "15px" }}
+                  className="py-2 overflow-auto bg-form-img card md-2"
                 >
-                  Already Registered?
+                  <AuthForm
+                    formName={formName}
+                    handleSubmit={handleSubmit}
+                    name={name}
+                    setName={setName}
+                    email={email}
+                    setEmail={setEmail}
+                    password={password}
+                    setPassword={setPassword}
+                    confirmPassword={confirmPassword}
+                    setConfirmPassword={setConfirmPassword}
+                    question={question}
+                    setQuestion={setQuestion}
+                    secret={secret}
+                    setSecret={setSecret}
+                    loading={loading}
+                    buttonValue={buttonValue}
+                  />
                 </div>
-                <div className="d-inline p-2">
-                  <Link href="#" className="  btn  btn-primary btn-lg">
-                    Forgot Password!
-                  </Link>
-                </div>
-                <div className="d-inline p-2">
-                  <Link href="/login" className=" btn btn-primary btn-lg">
-                    Login
-                  </Link>
+              </div>
+              <div className="row">
+                <div className="col py-4">
+                  <div className="row py-3  text-light">
+                    <div className="col ">
+                      <div
+                        className="d-inline p-2"
+                        style={{ fontSize: "25px", color: "red" }}
+                      >
+                        Already Registered?
+                      </div>
+                      <div className="d-inline p-2">
+                        <Link
+                          href="/forgot_password"
+                          className="  btn  btn-primary btn-lg"
+                        >
+                          Forgot Password!
+                        </Link>
+                      </div>
+                      <div className="d-inline p-2">
+                        <Link href="/login" className=" btn btn-primary btn-lg">
+                          Login
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+          <div className="row">
+            <div className="col">
+              <Modal
+                title="Congratulations!"
+                open={ok}
+                onCancel={() => setOk(false)}
+                footer={null}
+              >
+                <p>You have Successfully Registered</p>
+                <Link href="/login" className="btn btn-primary btn-sm">
+                  Login
+                </Link>
+              </Modal>
+            </div>
+          </div>
         </div>
-      </div>
+      </UserRoute>
     );
   }
 };

@@ -5,6 +5,7 @@ import Link from "next/link";
 import AuthForm from "../components/forms/AuthForm";
 import { useRouter } from "next/router";
 import { UserContext } from "../context";
+import UserRoute from "../components/routes/UserRoute";
 
 function Login() {
   const [email, setEmail] = useState("sajibsaha@gmail.com");
@@ -15,6 +16,7 @@ function Login() {
   const buttonValue = "Login";
   const router = useRouter();
   const [redirectTo, setRedirectTo] = useState(null);
+  const [current, setCurrent] = useContext(UserContext);
 
   // useEffect(() => {
   //   if (redirectTo) {
@@ -39,32 +41,63 @@ function Login() {
   // }, []);
   useEffect(() => {
     console.log(state);
-    state !== null && state.token !== "" && router.push("/user/dashboard");
+    state && state.token && router.push("/user/dashboard");
+  }, [state]);
+  useEffect(() => {
+    setState(JSON.parse(window.localStorage.getItem("auth")));
+  }, []);
+  useEffect(() => {
+    //console.log("Current =>", router.pathname);
+    //console.log(state);
+    //setCurrent(state);
+    // console.log(current);
+    const event = new Event("stateUpdate");
+    window.dispatchEvent(event);
+  }, []);
+
+  useEffect(() => {
+    const handleStateUpdate = () => {
+      setState(JSON.parse(window.localStorage.getItem("auth")));
+      window.location.reload();
+    };
+    window.addEventListener("stateUpdate", handleStateUpdate);
+    return () => {
+      window.removeEventListener("stateUpdate", handleStateUpdate);
+    };
   }, [state]);
   const handleSubmit = async (e) => {
+    //window.location.reload();
     e.preventDefault();
+    //setState(JSON.parse(window.localStorage.getItem("auth")));
     try {
+      setState(JSON.parse(window.localStorage.getItem("auth")));
+      if (state && state.token) {
+        router.push("/user/dashboard");
+      }
       setLoading(true);
-      const { data } = await axios.post(
-        `${process.env.NEXT_PUBLIC_API}/login`,
-        {
-          email,
-          password,
-        }
-      );
+      const { data } = await axios.post(`/login`, {
+        email,
+        password,
+      });
       //for clearing the input after successfull registration
       //router.push("/");
-      setState({
-        user: data.user,
-        token: data.token,
-      });
-      window.localStorage.setItem("auth", JSON.stringify(data));
+      const auth = JSON.parse(window.localStorage.getItem("auth"));
+
+      if (auth && auth.token) {
+        router.push("/user/dashboard");
+      } else {
+        setState({
+          user: data.user,
+          token: data.token,
+        });
+        window.localStorage.setItem("auth", JSON.stringify(data));
+        toast.success(`welcome ${email}`);
+      }
       setLoading(false);
-      toast.success(`welcome ${email}`);
       router.push("/user/dashboard");
     } catch (err) {
       setLoading(false);
-      toast.error(err.response.data);
+      // console.log(data);
     }
   };
   // useEffect(() => {
@@ -104,7 +137,10 @@ function Login() {
                 Don't Have An Account?
               </div>
               <div className="d-inline p-2">
-                <Link href="#" className="  btn  btn-primary btn-lg">
+                <Link
+                  href="/forgot_password"
+                  className="  btn  btn-primary btn-lg"
+                >
                   Forgot Password!
                 </Link>
               </div>

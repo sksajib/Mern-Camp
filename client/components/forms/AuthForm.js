@@ -61,7 +61,12 @@ const AuthForm = ({
       </div>
       <div className="form-group py-2">
         <small>
-          <label className=" py-2">Your Password</label>
+          {formName === "Enter Your Email and New Password" && (
+            <label className=" py-2">Your New password</label>
+          )}
+          {(formName === "login" || formName === "register") && (
+            <label className=" py-2">Your Password</label>
+          )}
         </small>
         <input
           value={password}
@@ -72,11 +77,17 @@ const AuthForm = ({
           placeholder="Enter password"
         />
       </div>
-      {formName === "Registration Form" && (
+      {(formName === "Registration Form" ||
+        formName === "Enter Your Email and New Password") && (
         <div>
           <div className="form-group py-2">
             <small>
-              <label className=" py-2">Confirm Your Password</label>
+              {formName === "Registration Form" && (
+                <label className=" py-2">Confirm Your Password</label>
+              )}
+              {formName === "Enter Your Email and New Password" && (
+                <label className=" py-2">Confirm Your New Password</label>
+              )}
             </small>
             <input
               value={confirmPassword}
@@ -105,7 +116,14 @@ const AuthForm = ({
           </div>
           <div className="form-group py-2">
             <small>
-              <label className=" py-2">Pick a question</label>
+              {formName === "Registration Form" && (
+                <label className=" py-2">Pick a question</label>
+              )}
+              {formName === "Enter Your Email and New Password" && (
+                <label className=" py-2">
+                  Select Your Secret Question to reset the password
+                </label>
+              )}
             </small>
             <select
               className="form-control py-2"
@@ -121,7 +139,9 @@ const AuthForm = ({
               <option value={"3"}>What city you are born?</option>
             </select>
             <small className=" py-2">
-              You can use this to reset this password
+              {formName === "Registration Form" && (
+                <div>You can use this to reset this password</div>
+              )}
             </small>
           </div>
           <div className="form-group py-3">
@@ -157,6 +177,19 @@ const AuthForm = ({
         <div className="d-grid gap-5 md-3 py-3">
           <button
             disabled={!email || !password}
+            type="submit"
+            className="btn btn-success "
+          >
+            {loading ? <SyncOutlined spin className="py-1" /> : buttonValue}
+          </button>
+        </div>
+      )}
+      {formName === "Enter Your Email and New Password" && (
+        <div className="d-grid gap-5 md-3 py-3">
+          <button
+            disabled={
+              !email || !password || !question || !secret || !confirmPassword
+            }
             type="submit"
             className="btn btn-success "
           >

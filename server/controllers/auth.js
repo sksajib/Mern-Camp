@@ -70,7 +70,7 @@ const login = async (req, res) => {
     const match = await comparePassword(password, user.password);
     if (!match) return res.status(400).send("wrong password");
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: "1d",
     });
     user.password = undefined;
     user.secret = undefined;
@@ -93,7 +93,59 @@ const currentUser = async (req, res) => {
     // res.json(user);
   } catch (err) {
     console.log(err);
-    res.sendStatus(400);
+    res.sendStatus(401);
+    res.send("JWT Token expired");
   }
 };
-module.exports = { register, login, currentUser };
+const forgotPassword = async (req, res) => {
+  try {
+    let { email, password, confirmPassword, question, secret } = req.body;
+    const secretC = secret.replaceAll(/\s+/g, " ");
+    const passC = password.replaceAll(/\s+/g, "");
+    if (!email) return res.status(400).send("Email is required");
+    if (!passC || passC.length < 8)
+      return res
+        .status(400)
+        .send(
+          "New Password is required and should be minimum 8 characters & maximum 64 characters long"
+        );
+    if (password !== confirmPassword)
+      return res.status(400).send("Passwords don't match");
+    if (!question) return res.status(400).send("Select a question");
+    if (!secretC || secretC == " ")
+      return res.status(400).send("Answer is required");
+    const exist = await User.findOne({ email });
+    if (!exist) return res.status(400).send("Please Enter Valid mail");
+    if (exist) {
+      //return res.status(200).send("User Found");
+      const match = await comparePassword(password, exist.password);
+      if (match)
+        return res
+          .status(400)
+          .send("New Password and Old Password Can't be Same");
+      if (!match) {
+        const hashedPassword = await hashPassword(password);
+        const questionMatch = question === exist.question && true;
+        if (!questionMatch)
+          return res.status(400).send("Select correct question");
+        if (questionMatch) {
+          const secretMatch = secretC === exist.secret;
+          if (!secretMatch)
+            return res.status(400).send("Give the Secret Answer Correctly");
+          if (secretMatch) {
+            const ok = await User.updateOne(
+              { email },
+              { password: hashedPassword }
+            );
+            console.log(ok);
+            return res.status(200).send("Password Updated Successfully");
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(400).send("try again");
+  }
+};
+module.exports = { register, login, currentUser, forgotPassword };

@@ -5,22 +5,30 @@ import { useRouter } from "next/router";
 
 const dashboard = () => {
   const [state, setState] = useContext(UserContext);
-  const router = useRouter();
-  if (state === null) {
-    router.push("/login");
+  let name = "";
+  if (state && state.user) {
+    name = String(state.user.name);
+    const [first, ...last] = name.split(" ");
+    name = first;
   }
-  return (
-    <UserRoute>
-      <div className="container-fluid container text-center text-dark">
-        <div className="row">
-          <div className="col">
-            <h1 className="display-1">
-              Welcome {state && state.user && state.user.name}!
-            </h1>
+  const router = useRouter();
+  if (state && state.token) {
+    return (
+      <UserRoute>
+        <div className="container-fluid container text-center text-dark">
+          <div className="row">
+            <div className="col">
+              <h1 className="display-1">
+                Welcome {state && state.user && name}!
+              </h1>
+            </div>
           </div>
         </div>
-      </div>
-    </UserRoute>
-  );
+      </UserRoute>
+    );
+  }
+  if (!state) {
+    router.push("/login");
+  }
 };
 export default dashboard;

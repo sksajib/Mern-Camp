@@ -8,7 +8,12 @@ const Nav = () => {
   const [current, setCurrent] = useState(state);
   const router = useRouter();
   ///const channel = new BroadcastChannel("my-channel");
-
+  let name = "";
+  if (state && state.user) {
+    name = String(state.user.name);
+    const [first, ...last] = name.split(" ");
+    name = first;
+  }
   //console.log(window.location.pathname);
   useEffect(() => {
     console.log("Current =>", router.pathname);
@@ -42,65 +47,69 @@ const Nav = () => {
   };
 
   return (
-    <nav
-      className="nav sticky-top justify-content-center container"
-      style={{ backgroundColor: "black", height: "75px", width: "100%" }}
-    >
-      <div>
-        <img
-          src="/images/Purba2.jpeg"
-          alt="image"
-          height={"40"}
-          width={"50"}
-          className=" img2"
-        />
-      </div>
-      <div>
-        <Link href="/" className="nav-link  text-light ">
-          <h2>Purba</h2>
-        </Link>
-      </div>
-      <div>
-        <Link href="/" className={`nav-link text-light ${isActive("/")}`}>
-          <h2>Unite</h2>
-        </Link>
-      </div>
-      {state === null && (
-        <>
+    <div className="container sticky-top">
+      <div className="row">
+        <nav
+          className="col-3 nav sticky-top bg-light text-dark justify-content-left "
+          style={{ height: "75px" }}
+        >
           <div>
-            <Link
-              href="/login"
-              className={`nav-link text-light ${isActive("/login")}`}
-            >
-              <h2>Login</h2>
+            <img
+              src="/images/Unite.png"
+              alt="image"
+              height={"60"}
+              width={"60"}
+            />
+          </div>
+        </nav>
+
+        <nav
+          className=" col-9 nav sticky-top bg-light text-dark justify-content-end "
+          style={{ height: "75px" }}
+        >
+          <div>
+            <Link href="/" className={`nav-link text-dark  ${isActive("/")}`}>
+              <h2>Unite</h2>
             </Link>
           </div>
-          <div>
-            <Link
-              href="/register"
-              className={`nav-link text-light ${isActive("/register")}`}
-            >
-              <h2>Register</h2>
-            </Link>
-          </div>
-        </>
-      )}
-      {state !== null && (
-        <>
-          <Link
-            href="/user/dashboard"
-            className={`nav-link text-light ${isActive("/user/dashboard")}`}
-          >
-            <h2>{state && state.user && state.user.name}</h2>
-          </Link>
-          <div className="nav-link text-light">
-            <a onClick={logout}>
-              <h2>Logout</h2>
-            </a>
-          </div>
-        </>
-      )}
-    </nav>
+          {state === null && (
+            <>
+              <div>
+                <Link
+                  href="/login"
+                  className={`nav-link text-dark ${isActive("/login")}`}
+                >
+                  <h2>Login</h2>
+                </Link>
+              </div>
+              <div>
+                <Link
+                  href="/register"
+                  className={`nav-link text-dark ${isActive("/register")}`}
+                >
+                  <h2>Register</h2>
+                </Link>
+              </div>
+            </>
+          )}
+          {state && state.token && (
+            <>
+              <Link
+                href="/user/dashboard"
+                className={`nav-link text-dark ${isActive("/user/dashboard")}`}
+              >
+                <h2>{state && state.user && name}</h2>
+              </Link>
+              <div className="nav-link text-dark">
+                <a onClick={logout}>
+                  <h2>Logout</h2>
+                </a>
+              </div>
+            </>
+          )}
+        </nav>
+      </div>
+    </div>
   );
 };
 export default Nav;

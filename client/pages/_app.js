@@ -6,13 +6,19 @@ import "react-toastify/dist/ReactToastify.css";
 import "antd/dist/reset.css";
 import "../public/css/style.css";
 import { UserProvider } from "../context";
-import MyNavbar from "../components/nav2";
+import UserRoute from "../components/routes/UserRoute";
 
 function MyApp({ Component, pageProps }) {
   return (
     <UserProvider>
       <Head>
         <link rel="stylesheet" href="/css/style.css" />
+        <link
+          rel="shortcut icon"
+          type="image/x-icon"
+          href="/images/Unite.ico"
+        />
+        <title>Welcome to Unite</title>
       </Head>
       <Nav />
       <ToastContainer
