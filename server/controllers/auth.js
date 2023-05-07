@@ -20,7 +20,6 @@ const register = async (req, res) => {
       );
   const s1 = "Hello";
   const s2 = "Hello2";
-  console.log(password !== confirmPassword);
   const match = (password, confirmPassword) => {
     if (password !== confirmPassword) {
       return true;
@@ -28,7 +27,6 @@ const register = async (req, res) => {
       return false;
     }
   };
-  console.log(typeof password);
 
   if (password !== confirmPassword)
     return res.status(400).send("Passwords don't match");
@@ -80,12 +78,10 @@ const login = async (req, res) => {
       user,
     });
   } catch (err) {
-    console.log(err);
     return res.status(400).send("try again");
   }
 };
 const currentUser = async (req, res) => {
-  console.log(req.auth);
   try {
     // console.log(req);
     //const user = await User.findById(req.auth._id);
@@ -137,7 +133,6 @@ const forgotPassword = async (req, res) => {
               { email },
               { password: hashedPassword }
             );
-            console.log(ok);
             return res.status(200).send("Password Updated Successfully");
           }
         }
