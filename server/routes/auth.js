@@ -1,10 +1,10 @@
 const express = require("express");
-const { expressjwt: jwt } = require("express-jwt");
 const {
   register,
   login,
   currentUser,
   forgotPassword,
+  createPost,
 } = require("../controllers/auth");
 const { requireSignin } = require("../Middlewares");
 const router = express.Router();

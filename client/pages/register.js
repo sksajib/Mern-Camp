@@ -66,21 +66,34 @@ const Register = () => {
     return (
       <UserRoute>
         <div className="container-fluid container">
-          <div className="row py-3 bg-default-img text-dark">
+          <div className="row py-3 bg-default-img sticky-reg text-dark">
             <div className="col text-center">
               <h2>Registration page</h2>
             </div>
           </div>
-          <div className="row py-4 bg-default-img2 text-dark">
-            <div
-              className=" col-5 py-3  text-center text-light "
-              style={{ height: "460px" }}
-            >
-              <img src="/images/Unite.png" alt="image" width={"250"} />
+          <div className="row  bg-default-img2 text-dark">
+            <div className=" col-md-5 text-center text-light justify-content-center">
+              <div className="mt-4">
+                <img
+                  src="/images/Unite.png"
+                  alt="image"
+                  width={"60%"}
+                  className="py-7"
+                />
+              </div>
             </div>
-            <div className="col-7  py-2">
+            <div className="col-md-7 ">
               <div className="row">
-                {" "}
+                <nav
+                  className="nav bg-dark text-light justify-content-center"
+                  style={{ height: "45px", width: "580px" }}
+                >
+                  <div>
+                    <h2>Registration Form</h2>
+                  </div>
+                </nav>
+              </div>
+              <div className="row">
                 <div
                   style={{ height: "360px", width: "580px", padding: "15px" }}
                   className="py-2 overflow-auto bg-form-img card md-2"

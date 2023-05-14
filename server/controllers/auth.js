@@ -40,7 +40,7 @@ const register = async (req, res) => {
   const name2 = nameC.substring(1, len + 1);
   name = nameClean + name2;
   const secretUpper = secretC.toUpperCase();
-  const exist = await User.findOne({ emailUpper });
+  const exist = await User.findOne({ email: emailUpper });
   if (exist) return res.status(400).send("Email is taken");
   //hash password
   const hashedPassword = await hashPassword(password);
@@ -149,4 +149,5 @@ const forgotPassword = async (req, res) => {
     return res.status(400).send("try again");
   }
 };
+
 module.exports = { register, login, currentUser, forgotPassword };
