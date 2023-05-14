@@ -19,17 +19,19 @@ const AuthForm = ({
 }) => {
   return (
     <form onSubmit={handleSubmit}>
-      <div className="text-form form-group py-1 text-center">
-        <label
-          className=" font-weight-bold py-1 text-center"
-          style={{
-            fontWeight: "bold",
-            fontSize: "16 !important",
-          }}
-        >
-          <u> {formName}</u>
-        </label>
-      </div>
+      {formName !== "Registration Form" && (
+        <div className="text-form form-group py-1 text-center">
+          <label
+            className=" font-weight-bold py-1 text-center"
+            style={{
+              fontWeight: "bold",
+              fontSize: "16 !important",
+            }}
+          >
+            <u> {formName}</u>
+          </label>
+        </div>
+      )}
 
       {formName === "Registration Form" && (
         <div className="form-group py-2">
@@ -64,7 +66,7 @@ const AuthForm = ({
           {formName === "Enter Your Email and New Password" && (
             <label className=" py-2">Your New password</label>
           )}
-          {(formName === "login" || formName === "register") && (
+          {(formName === "Login Form" || formName === "Registration Form") && (
             <label className=" py-2">Your Password</label>
           )}
         </small>

@@ -12,6 +12,7 @@ nav {
   background-size: 100%;
   height: 100%;
   width: 100%;
+  background-repeat: no-repeat;
 }
 .bg-form-img {
   background-image: url("/images/Unite.png");
@@ -32,8 +33,47 @@ nav {
   text-shadow: 2px 5px 5px #e759d0;
   cursor: pointer;
 }
+
 .active {
   background-color: rgb(15, 11, 221);
   border-radius: 35px;
   border-color: aqua;
+}
+.card-footer {
+  justify-content: last baseline !important;
+  text-align: left !important;
+}
+.ql-editor {
+  overflow-y: scroll;
+  resize: vertical;
+}
+.ql-editor {
+  min-height: 12em;
+}
+.ql-container {
+  border-bottom-left-radius: 0.5em;
+  border-bottom-right-radius: 0.5em;
+  background: #fefcfc;
+}
+.themeSwitcher {
+  margin-top: 0.5em;
+  font-size: small;
+}
+.ql-bubble.ql-editor {
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+}
+.ql-snow.ql-toolbar {
+  display: block;
+  background: #eaecec;
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+}
+
+.size {
+  width: 15px;
+  font-size: 24px;
+}
+.size:hover {
+  cursor: pointer;
 }
