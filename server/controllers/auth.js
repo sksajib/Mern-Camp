@@ -4,7 +4,8 @@ const { hashPassword, comparePassword } = require("../helpers/auth");
 const register = async (req, res) => {
   // console.log("Register endpoint=>", req.body);
 
-  let { name, email, password, confirmPassword, question, secret } = req.body;
+  let { name, email, password, confirmPassword, question, secret, photo } =
+    req.body;
   const nameC = name.replaceAll(/\s+/g, " ");
   const secretC = secret.replaceAll(/\s+/g, " ");
   const passC = password.replaceAll(/\s+/g, "");
@@ -50,6 +51,7 @@ const register = async (req, res) => {
     password: hashedPassword,
     question,
     secret: secretUpper,
+    photo: "",
   });
   try {
     await user.save();
@@ -149,5 +151,29 @@ const forgotPassword = async (req, res) => {
     return res.status(400).send("try again");
   }
 };
+const addPicture = async (req, res) => {
+  try {
+    const { email, data } = req.body;
+    console.log(data.url);
 
-module.exports = { register, login, currentUser, forgotPassword };
+    const ok = await User.updateOne({ email: email }, { photo: data.url });
+    const user = await User.findOne({ email: email });
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    //console.log(user);
+    user.password = undefined;
+    user.secret = undefined;
+    user.question = undefined;
+    const user2 = { token, user };
+    console.log(user2);
+    res.send({
+      token,
+      user,
+    });
+    console.log(ok);
+  } catch (err) {
+    return res.status(400).send("Something Went Wrong");
+  }
+};
+module.exports = { register, login, currentUser, forgotPassword, addPicture };

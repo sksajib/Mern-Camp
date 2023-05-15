@@ -38,6 +38,7 @@ nav {
   background-color: rgb(15, 11, 221);
   border-radius: 35px;
   border-color: aqua;
+  color: white !important;
 }
 .card-footer {
   justify-content: last baseline !important;
@@ -76,4 +77,18 @@ nav {
 }
 .size:hover {
   cursor: pointer;
+}
+.size2 {
+  width: 25px;
+  font-size: 40px;
+  margin-right: 10px;
+}
+.size2:hover {
+  cursor: pointer;
+}
+.margin {
+  margin-right: 44%;
+}
+.size3 {
+  font-size: 25px;
 }
