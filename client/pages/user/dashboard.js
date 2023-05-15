@@ -141,16 +141,16 @@ const dashboard = () => {
         <div className="container-fluid container text-dark">
           <div className="row py-3 bg-default-img text-dark">
             <div className="d-inline col-md-10">
-              <h2>News Feed</h2>
+              <h2>Timeline</h2>
             </div>
             <div className="dp d-inline col-md-2">
               <label>
                 {!state.user.photo ? (
-                  <Avatar size={50} className="mt-1">
+                  <Avatar size={60} className="mt-1">
                     {state.user.name.charAt(0)}
                   </Avatar>
                 ) : (
-                  <Avatar src={state.user.photo} size={50} className="mt-1" />
+                  <Avatar src={state.user.photo} size={60} className="mt-1" />
                 )}
                 <input
                   type="File"
