@@ -62,10 +62,10 @@ const createPost = (req, res) => {
   }
 };
 const uploadImage = async (req, res) => {
-  console.log("request files=>", req.files);
+  //console.log("request files=>", req.files);
   try {
     const result = await cloudinary.uploader.upload(req.files.image.path);
-    console.log("uploaded image url=>", result);
+    //console.log("uploaded image url=>", result);
     res.json({
       url: result.secure_url,
       public_id: result.public_id,

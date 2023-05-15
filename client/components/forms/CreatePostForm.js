@@ -125,6 +125,8 @@ const CreatePostForm = ({
     "list",
     "bullet",
     "indent",
+    "color",
+    "align",
     "link",
     "image",
     "video",
