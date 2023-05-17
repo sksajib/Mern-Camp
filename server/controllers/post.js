@@ -76,8 +76,9 @@ const uploadImage = async (req, res) => {
 };
 const postByUser = async (req, res) => {
   try {
-    const posts = await Post.find({ postedBy: req.auth._id })
-      .populate("postedBy", "_id name image")
+    //const posts = await Post.find({ postedBy: req.auth._id })//returning posts only by the logged in user
+    const posts = await Post.find() //returning all posts
+      .populate("postedBy", "_id name photo")
       .sort({ createdAt: -1 })
       .limit(10);
     res.json(posts);
@@ -85,4 +86,5 @@ const postByUser = async (req, res) => {
     console.log(err);
   }
 };
-module.exports = { createPost, uploadImage, postByUser };
+const userPost = (req, res) => {};
+module.exports = { createPost, uploadImage, postByUser, userPost };

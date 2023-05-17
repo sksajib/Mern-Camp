@@ -1,6 +1,8 @@
 import parse from "html-react-parser";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { UserContext } from "../../context";
+import Router from "next/router";
+import { useRouter } from "next/router";
 import {
   LikeOutlined,
   HeartOutlined,
@@ -9,12 +11,47 @@ import {
   CommentOutlined,
   ShareAltOutlined,
   GlobalOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import { Avatar } from "antd";
+import { Avatar, Button } from "antd";
 import moment from "moment";
 
 const PostList = ({ posts }) => {
   const [state, setState] = useContext(UserContext);
+  const [isClicked, setClicked] = useState(false);
+  const router = useRouter();
+  const handleMenu = () => {
+    setClicked(!isClicked);
+  };
+
+  // const fold = useRef(null);
+  // const unfold = useRef(null);
+  const toggleDivs = () => {
+    const fold1 = document.querySelector("fold");
+    const unfold1 = document.querySelector("unfold");
+
+    if (fold1.style.display === "none") {
+      fold1.style.display = "block";
+      unfold1.style.display = "none";
+    } else {
+      fold1.style.display = "none";
+      unfold1.style.display = "block";
+    }
+  };
+
+  // const editPost = (e) => {
+  //   router.push({
+  //     pathname: "/user/editPost/[pid]",
+  //     query: { pid: e.target.value },
+  //   });
+  // };
+  const deletePost = (e) => {
+    console.log(e.target.value);
+  };
+
   return (
     <div>
       <pre>
@@ -29,20 +66,70 @@ const PostList = ({ posts }) => {
                 <div className="row">
                   <div className="col-md-1">
                     <div>
-                      {!state.user.photo ? (
+                      {!post.postedBy.photo ? (
                         <Avatar size={50} className="mt-1">
-                          {state.user.name.charAt(0)}
+                          {post.postedBy.name.charAt(0)}
                         </Avatar>
                       ) : (
                         <Avatar
-                          src={state.user.photo}
+                          src={post.postedBy.photo}
                           size={50}
                           className="mt-1"
                         />
                       )}
                     </div>
                   </div>
-                  <div className="col-md-2 pt-3">{state.user.name}</div>
+                  <div className="col-md-2 pt-3">{post.postedBy.name}</div>
+                  <div className="col-md-9 d-flex flex-row-reverse">
+                    {state.user._id === post.postedBy._id && !isClicked && (
+                      <label>
+                        <MenuFoldOutlined
+                          className={`size2 px-4 `}
+                          style={{ marginLeft: "20px", marginRight: "1px" }}
+                        />
+                        <button onClick={handleMenu} hidden>
+                          Menu
+                        </button>
+                      </label>
+                    )}
+                    {state.user._id === post.postedBy._id && isClicked && (
+                      <div>
+                        <label>
+                          <EditOutlined
+                            className="size2 px-3"
+                            style={{ marginLeft: "20px", marginRight: "20px" }}
+                          />
+                          <button
+                            onClick={() => {
+                              router.push(`/user/post/${post._id}`);
+                            }}
+                            value={post._id}
+                            hidden
+                          >
+                            Edit
+                          </button>
+                        </label>
+                        <label>
+                          <DeleteOutlined
+                            className="size2 px-3"
+                            style={{ marginLeft: "20px", marginRight: "20px" }}
+                          />
+                          <button onClick={deletePost} value={post._id} hidden>
+                            Delete
+                          </button>
+                        </label>
+                        <label>
+                          <MenuUnfoldOutlined
+                            className={`size2 px-4 `}
+                            style={{ marginLeft: "20px", marginRight: "1px" }}
+                          />
+                          <button onClick={handleMenu} hidden>
+                            Menu
+                          </button>
+                        </label>
+                      </div>
+                    )}
+                  </div>
                   {/* <div className="col-md-2 pt-3">
                     
                   </div> */}

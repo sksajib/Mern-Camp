@@ -55,7 +55,7 @@ const dashboard = () => {
         toast.error(data.error);
       }
       console.log("Create Post Response =>", data);
-
+      window.location.reload();
       // console.log("Create Post Response =>", content);
       toast.success("Post Created");
       setImage({});

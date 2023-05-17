@@ -131,7 +131,6 @@ const AuthForm = ({
               className="form-control py-2"
               value={question}
               onChange={(e) => {
-                console.log(e.target.value);
                 setQuestion(e.target.value);
               }}
             >

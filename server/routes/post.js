@@ -1,6 +1,11 @@
 const express = require("express");
 const formidable = require("express-formidable");
-const { createPost, uploadImage, postByUser } = require("../controllers/post");
+const {
+  createPost,
+  uploadImage,
+  postByUser,
+  userPost,
+} = require("../controllers/post");
 const { requireSignin } = require("../Middlewares");
 const router = express.Router();
 
@@ -12,4 +17,5 @@ router.post(
   uploadImage
 );
 router.get("/user-posts", requireSignin, postByUser);
+router.get("user-post/:_id", requireSignin, userPost);
 module.exports = router;
