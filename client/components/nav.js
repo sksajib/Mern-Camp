@@ -92,18 +92,57 @@ const Nav = () => {
               </div>
             </>
           )}
+          {/* Example single danger button */}
+
           {state && state.token && (
             <>
-              <Link
-                href="/user/dashboard"
-                className={`nav-link text-dark ${isActive("/user/dashboard")}`}
-              >
-                <h2>{state && state.user && name}</h2>
-              </Link>
-              <div className="nav-link text-dark">
-                <a onClick={logout}>
-                  <h2>Logout</h2>
+              <div className=" dropdown" style={{}}>
+                <a
+                  role="button"
+                  href="/user/dashboard"
+                  className={`nav-link text-dark ${isActive(
+                    "/user/dashboard"
+                  )}`}
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <h2>{state && state.user && name}</h2>
                 </a>
+                <ul
+                  className="dropdown-menu dropdown-menu-end"
+                  style={{ overflow: "hidden" }}
+                >
+                  <li>
+                    <a
+                      role="button"
+                      className={`nav-link text-dark ${isActive(
+                        "/user/dashboard"
+                      )}`}
+                      href="/user/dashboard"
+                      aria-expanded="false"
+                    >
+                      <h3>Profile</h3>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className={`nav-link text-dark ${isActive("#")}`}
+                      href="#"
+                    >
+                      <h2>About</h2>
+                    </a>
+                  </li>
+                  <li>
+                    <hr className="dropdown-divider" />
+                  </li>
+                  <li>
+                    <div className="nav-link text-dark">
+                      <a onClick={logout}>
+                        <h2>Logout</h2>
+                      </a>
+                    </div>
+                  </li>
+                </ul>
               </div>
             </>
           )}

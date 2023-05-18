@@ -9,9 +9,11 @@ import PostList from "../../components/cards/PostList";
 import { Avatar } from "antd";
 const dashboard = () => {
   const [state, setState] = useContext(UserContext);
-  const [image, setImage] = useState({});
+  const [image, setImage] = useState("");
   const [dp, setDp] = useState({});
-  if (!dp.url) {
+  const [value, setValue] = useState("");
+  let url = "";
+  if (!dp.url && state !== null) {
     dp.url = state.user.photo;
   }
   let dpChange;
@@ -68,28 +70,36 @@ const dashboard = () => {
       fetchUserPosts();
     }
   };
-  const postUpload = (e) => {
+  const postUpload = async (e) => {
     e.preventDefault();
     setContent("");
     setContent("");
-    setImage({});
+    const data = await axios.post("/clear-photo", url);
+    setImage("");
     setUploading(false);
   };
 
   const handleImage2 = async (e) => {
+    e.preventDefault();
+    console.log("1");
     const file = e.target.files[0];
+    console.log(e.target.files);
     const formData2 = new FormData();
 
     formData2.append("image", file);
     // console.log([...formData2]);
     setUploading(true);
     try {
-      const { data } = await axios.post("/uploadImage", formData2);
-      console.log("uploaded image=>", data);
+      const { data } = await axios.post("/uploadImage", formData2, url);
+      //console.log("uploaded image=>", data);
       setImage({
         url: data.url,
         public_id: data.public_id,
       });
+      setValue("");
+      url = data.url;
+      console.log(url);
+      //console.log("image=>", image);
       setUploading(false);
       if (data.error) {
         toast.error(data.error);
@@ -176,6 +186,7 @@ const dashboard = () => {
                 handleImage2={handleImage2}
                 uploading={uploading}
                 image={image}
+                value={value}
               />
               <pre>
                 <PostList posts={posts} />

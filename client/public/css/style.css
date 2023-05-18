@@ -92,3 +92,6 @@ nav {
 .size3 {
   font-size: 25px;
 }
+.btnDropNav {
+  border-radius: 45%;
+}

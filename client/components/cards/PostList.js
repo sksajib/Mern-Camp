@@ -3,11 +3,16 @@ import { useState, useContext, useEffect, useRef } from "react";
 import { UserContext } from "../../context";
 import Router from "next/router";
 import { useRouter } from "next/router";
+import { Modal } from "antd";
+import axios from "axios";
+import { toast } from "react-toastify";
+import ConfirmationDialog from "./DeleteModal";
 import {
   LikeOutlined,
   HeartOutlined,
   HeartFilled,
   LikeFilled,
+  ExclamationCircleFilled,
   CommentOutlined,
   ShareAltOutlined,
   GlobalOutlined,
@@ -22,34 +27,36 @@ import moment from "moment";
 const PostList = ({ posts }) => {
   const [state, setState] = useContext(UserContext);
   const [isClicked, setClicked] = useState(false);
+  const [ok, setOk] = useState(false);
+  const [postid, setId] = useState("");
+
+  // const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const { confirm } = Modal;
   const handleMenu = () => {
     setClicked(!isClicked);
   };
+  const handleDelete = async (id) => {
+    setId(id);
+    console.log(id);
 
-  // const fold = useRef(null);
-  // const unfold = useRef(null);
-  const toggleDivs = () => {
-    const fold1 = document.querySelector("fold");
-    const unfold1 = document.querySelector("unfold");
-
-    if (fold1.style.display === "none") {
-      fold1.style.display = "block";
-      unfold1.style.display = "none";
-    } else {
-      fold1.style.display = "none";
-      unfold1.style.display = "block";
+    setOk(true);
+  };
+  const onConfirm = async (id) => {
+    try {
+      console.log("ok");
+      console.log(id);
+      const { data } = await axios.delete(`/delete-post/${id}`);
+      setOk(false);
+      toast.error("Post Deleted");
+      window.location.reload();
+    } catch (err) {
+      setOk(false);
+      console.log(err);
     }
   };
-
-  // const editPost = (e) => {
-  //   router.push({
-  //     pathname: "/user/editPost/[pid]",
-  //     query: { pid: e.target.value },
-  //   });
-  // };
-  const deletePost = (e) => {
-    console.log(e.target.value);
+  const onCancel = () => {
+    setOk(false);
   };
 
   return (
@@ -62,10 +69,32 @@ const PostList = ({ posts }) => {
               className="card mt-2 mb-3"
               style={{ overflow: "hidden" }}
             >
+              {/* {(id = post._id)} */}
               <div className="card-header">
                 <div className="row">
                   <div className="col-md-1">
                     <div>
+                      <Modal
+                        open={postid === post._id && ok}
+                        onCancel={onCancel}
+                        value={post._id}
+                        footer={null}
+                      >
+                        <h2>Are you sure to delete this post?</h2>
+                        <button
+                          className="btn btn-danger me-2 btn-lg"
+                          value={post._id}
+                          onClick={() => onConfirm(post._id)}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          className="btn btn-primary me-2 btn-lg"
+                          onClick={onCancel}
+                        >
+                          No
+                        </button>
+                      </Modal>
                       {!post.postedBy.photo ? (
                         <Avatar size={50} className="mt-1">
                           {post.postedBy.name.charAt(0)}
@@ -114,7 +143,11 @@ const PostList = ({ posts }) => {
                             className="size2 px-3"
                             style={{ marginLeft: "20px", marginRight: "20px" }}
                           />
-                          <button onClick={deletePost} value={post._id} hidden>
+                          <button
+                            onClick={() => handleDelete(post._id)}
+                            value={post._id}
+                            hidden
+                          >
                             Delete
                           </button>
                         </label>
@@ -136,6 +169,7 @@ const PostList = ({ posts }) => {
                 </div>
               </div>
               <div className="card-body">
+                <div></div>
                 <div>
                   <GlobalOutlined className="size3  " />
 
@@ -152,7 +186,7 @@ const PostList = ({ posts }) => {
                 {/* <div>{post.image && post.image.url}</div> */}
                 <div className="mt-2">
                   {post.image && (
-                    <img src={post.image.url} width={"100%"} height={"100%"} />
+                    <img src={post.image} width={"100%"} height={"100%"} />
                   )}
                 </div>
               </div>
@@ -172,6 +206,21 @@ const PostList = ({ posts }) => {
         {/* {posts && JSON.stringify(posts, null, 4)} */}
       </pre>
       <pre>{!posts && "Your Posts will appear here"}</pre>
+      {/* <div className="row">
+            <div className="col">
+              <Modal
+                title="Delete Post"
+                open={ok}
+                onCancel={() => setOk(false)}
+                footer={null}
+              >
+                <p>Are you Sure to delete this post?</p>
+                <Link href="/login" className="btn btn-primary btn-sm">
+                  Login
+                </Link>
+              </Modal>
+            </div>
+          </div> */}
     </div>
   );
 };

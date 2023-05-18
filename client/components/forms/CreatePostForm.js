@@ -6,12 +6,12 @@ import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.core.css";
 import "react-quill/dist/quill.bubble.css";
 import "quill-image-uploader/dist/quill.imageUploader.min.css";
-import "quill-emoji/dist/quill-emoji.css";
+
 import axios from "axios";
 import dynamic from "next/dynamic";
 //import * as Emoji from "quill-emoji";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-const Quill = dynamic(() => import("quill"), { ssr: false });
+
 //const emoji = dynamic(() => import("quill-emoji"), { ssr: false });
 //Quill.register("modules/emoji", Emoji);
 const CreatePostForm = ({
@@ -24,6 +24,7 @@ const CreatePostForm = ({
   placeholder,
   uploading,
   image,
+  value,
 }) => {
   // const [quillObj, setQuillObj] = useState(ReactQuill);
   // console.log(quillObj);
@@ -105,7 +106,7 @@ const CreatePostForm = ({
         [{ color: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
         [{ align: [] }],
-        ["emoji"],
+
         [
           "link",
           // "image", "video"
@@ -132,7 +133,7 @@ const CreatePostForm = ({
     "bullet",
     "indent",
     "color",
-    "emoji",
+
     "align",
     "link",
     "image",
@@ -191,6 +192,7 @@ const CreatePostForm = ({
                 type="File"
                 className=" m-2 py-2"
                 accept="image/*"
+                value={value}
                 onChange={handleImage2}
                 hidden
               />
@@ -220,8 +222,6 @@ const CreatePostForm = ({
           </div>
         </form>
       </div>
-      <script src="/dist/quill.js"></script>
-      <script src="/dist/quill.imageUploader.min.js"></script>
     </div>
   );
 };
