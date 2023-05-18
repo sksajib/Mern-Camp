@@ -70,137 +70,166 @@ const PostList = ({ posts }) => {
               style={{ overflow: "hidden" }}
             >
               {/* {(id = post._id)} */}
-              <div className="card-header">
-                <div className="row">
-                  <div className="col-md-1">
-                    <div>
-                      <Modal
-                        open={postid === post._id && ok}
-                        onCancel={onCancel}
-                        value={post._id}
-                        footer={null}
-                      >
-                        <h2>Are you sure to delete this post?</h2>
-                        <button
-                          className="btn btn-danger me-2 btn-lg"
-                          value={post._id}
-                          onClick={() => onConfirm(post._id)}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          className="btn btn-primary me-2 btn-lg"
-                          onClick={onCancel}
-                        >
-                          No
-                        </button>
-                      </Modal>
-                      {!post.postedBy.photo ? (
-                        <Avatar size={50} className="mt-1">
-                          {post.postedBy.name.charAt(0)}
-                        </Avatar>
-                      ) : (
-                        <Avatar
-                          src={post.postedBy.photo}
-                          size={50}
-                          className="mt-1"
-                        />
-                      )}
+              {post.postedBy && (
+                <div>
+                  <div className="card-header">
+                    <div className="row">
+                      <div className="col-md-1">
+                        <div>
+                          <Modal
+                            open={postid === post._id && ok}
+                            onCancel={onCancel}
+                            value={post._id}
+                            footer={null}
+                          >
+                            <h2>Are you sure to delete this post?</h2>
+                            <button
+                              className="btn btn-danger me-2 btn-lg"
+                              value={post._id}
+                              onClick={() => onConfirm(post._id)}
+                            >
+                              Yes
+                            </button>
+                            <button
+                              className="btn btn-primary me-2 btn-lg"
+                              onClick={onCancel}
+                            >
+                              No
+                            </button>
+                          </Modal>
+
+                          {!post.postedBy.photo ? (
+                            <Avatar size={50} className="mt-1">
+                              {post.postedBy.name.charAt(0)}
+                            </Avatar>
+                          ) : (
+                            <Avatar
+                              src={post.postedBy.photo}
+                              size={50}
+                              className="mt-1"
+                            />
+                          )}
+                        </div>
+                      </div>
+                      <div className="col-md-2 pt-3">{post.postedBy.name}</div>
+                      <div className="col-md-9 d-flex flex-row-reverse">
+                        {post.postedBy &&
+                          state.user._id === post.postedBy._id &&
+                          !isClicked && (
+                            <label>
+                              <MenuFoldOutlined
+                                className={`size2 px-4 `}
+                                style={{
+                                  marginLeft: "20px",
+                                  marginRight: "1px",
+                                }}
+                              />
+                              <button onClick={handleMenu} hidden>
+                                Menu
+                              </button>
+                            </label>
+                          )}
+                        {post.postedBy &&
+                          state.user._id === post.postedBy._id &&
+                          isClicked && (
+                            <div>
+                              <label>
+                                <EditOutlined
+                                  className="size2 px-3"
+                                  style={{
+                                    marginLeft: "20px",
+                                    marginRight: "20px",
+                                  }}
+                                />
+                                <button
+                                  onClick={() => {
+                                    router.push(`/user/post/${post._id}`);
+                                  }}
+                                  value={post._id}
+                                  hidden
+                                >
+                                  Edit
+                                </button>
+                              </label>
+                              <label>
+                                <DeleteOutlined
+                                  className="size2 px-3"
+                                  style={{
+                                    marginLeft: "20px",
+                                    marginRight: "20px",
+                                  }}
+                                />
+                                <button
+                                  onClick={() => handleDelete(post._id)}
+                                  value={post._id}
+                                  hidden
+                                >
+                                  Delete
+                                </button>
+                              </label>
+                              <label>
+                                <MenuUnfoldOutlined
+                                  className={`size2 px-4 `}
+                                  style={{
+                                    marginLeft: "20px",
+                                    marginRight: "1px",
+                                  }}
+                                />
+                                <button onClick={handleMenu} hidden>
+                                  Menu
+                                </button>
+                              </label>
+                            </div>
+                          )}
+                      </div>
+                      {/* <div className="col-md-2 pt-3">
+                    
+                  </div> */}
                     </div>
                   </div>
-                  <div className="col-md-2 pt-3">{post.postedBy.name}</div>
-                  <div className="col-md-9 d-flex flex-row-reverse">
-                    {state.user._id === post.postedBy._id && !isClicked && (
-                      <label>
-                        <MenuFoldOutlined
-                          className={`size2 px-4 `}
-                          style={{ marginLeft: "20px", marginRight: "1px" }}
-                        />
-                        <button onClick={handleMenu} hidden>
-                          Menu
-                        </button>
-                      </label>
-                    )}
-                    {state.user._id === post.postedBy._id && isClicked && (
+
+                  <div className="card-body">
+                    {post.postedBy && (
                       <div>
-                        <label>
-                          <EditOutlined
-                            className="size2 px-3"
-                            style={{ marginLeft: "20px", marginRight: "20px" }}
-                          />
-                          <button
-                            onClick={() => {
-                              router.push(`/user/post/${post._id}`);
-                            }}
-                            value={post._id}
-                            hidden
-                          >
-                            Edit
-                          </button>
-                        </label>
-                        <label>
-                          <DeleteOutlined
-                            className="size2 px-3"
-                            style={{ marginLeft: "20px", marginRight: "20px" }}
-                          />
-                          <button
-                            onClick={() => handleDelete(post._id)}
-                            value={post._id}
-                            hidden
-                          >
-                            Delete
-                          </button>
-                        </label>
-                        <label>
-                          <MenuUnfoldOutlined
-                            className={`size2 px-4 `}
-                            style={{ marginLeft: "20px", marginRight: "1px" }}
-                          />
-                          <button onClick={handleMenu} hidden>
-                            Menu
-                          </button>
-                        </label>
+                        <div>
+                          <GlobalOutlined className="size3  " />
+
+                          <span className="pt-1 ms-3">
+                            {moment(post.createdAt).fromNow()}
+                          </span>
+                        </div>
+                        {post.content !== "<p><br></p>" && (
+                          <div className="mt-2 card">
+                            {post.content && parse(post.content)}
+                          </div>
+                        )}
+
+                        {/* <div>{post.image && post.image.url}</div> */}
+                        <div className="mt-2">
+                          {post.image && (
+                            <img
+                              src={post.image}
+                              width={"100%"}
+                              height={"100%"}
+                            />
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
-                  {/* <div className="col-md-2 pt-3">
-                    
-                  </div> */}
-                </div>
-              </div>
-              <div className="card-body">
-                <div></div>
-                <div>
-                  <GlobalOutlined className="size3  " />
-
-                  <span className="pt-1 ms-3">
-                    {moment(post.createdAt).fromNow()}
-                  </span>
-                </div>
-                {post.content !== "<p><br></p>" && (
-                  <div className="mt-2 card">
-                    {post.content && parse(post.content)}
+                  <div className="card-footer d-inline justify-content-between">
+                    <div className="margin d-inline">
+                      <HeartOutlined className="size2 text-danger " />
+                    </div>
+                    <div className=" margin d-inline ">
+                      <CommentOutlined className="size2 " />
+                    </div>
+                    <div className=" d-inline margin">
+                      <ShareAltOutlined className="size2 " />
+                    </div>
                   </div>
-                )}
-
-                {/* <div>{post.image && post.image.url}</div> */}
-                <div className="mt-2">
-                  {post.image && (
-                    <img src={post.image} width={"100%"} height={"100%"} />
-                  )}
                 </div>
-              </div>
-              <div className="card-footer d-inline justify-content-between">
-                <div className="margin d-inline">
-                  <HeartOutlined className="size2 text-danger " />
-                </div>
-                <div className=" margin d-inline ">
-                  <CommentOutlined className="size2 " />
-                </div>
-                <div className=" d-inline margin">
-                  <ShareAltOutlined className="size2 " />
-                </div>
-              </div>
+              )}
             </div>
           ))}
         {/* {posts && JSON.stringify(posts, null, 4)} */}

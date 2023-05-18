@@ -44,13 +44,13 @@ const dashboard = () => {
       if (data.length > 0) {
         setPosts(data);
       }
-      console.log("User Posts =>", data.length);
+      //console.log("User Posts =>", data.length);
     } catch (err) {}
   };
   const postSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-    console.log(content);
+
     try {
       const { data } = await axios.post("/createPost", { content, image });
       if (data.error) {
