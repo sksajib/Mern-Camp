@@ -1,17 +1,18 @@
 import { SyncOutlined, CameraFilled, LoadingOutlined } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import { Avatar } from "antd";
-//import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.core.css";
 import "react-quill/dist/quill.bubble.css";
 import "quill-image-uploader/dist/quill.imageUploader.min.css";
+
 import axios from "axios";
 import dynamic from "next/dynamic";
-
+//import * as Emoji from "quill-emoji";
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-const Quill = dynamic(() => import("quill"), { ssr: false });
 
+//const emoji = dynamic(() => import("quill-emoji"), { ssr: false });
+//Quill.register("modules/emoji", Emoji);
 const CreatePostForm = ({
   postUpload,
   postSubmit,
@@ -22,6 +23,7 @@ const CreatePostForm = ({
   placeholder,
   uploading,
   image,
+  value,
 }) => {
   // const [quillObj, setQuillObj] = useState(ReactQuill);
   // console.log(quillObj);
@@ -39,59 +41,59 @@ const CreatePostForm = ({
   };
   let file = null;
 
-  const imageHandler = () => {
-    const input = document.createElement("input");
+  // const imageHandler = () => {
+  //   const input = document.createElement("input");
 
-    input.setAttribute("type", "file");
-    input.setAttribute("accept", "image/*");
-    input.click();
-    console.log(input);
-    console.log(new FormData());
-    input.onChange = async (e) => {
-      const file = e.target.files[0];
-      //console.log(file);
-      const formData = new FormData();
-      console.log([...formData]);
-      formData.append("image", file);
-      console.log([...formData]);
-      //var fileName = file.name;
-      const quill = quillRef.current.getEditor();
-      console.log(quill);
-      const range = quill.getSelection(true);
+  //   input.setAttribute("type", "file");
+  //   input.setAttribute("accept", "image/*");
+  //   input.click();
+  //   console.log(input);
+  //   console.log(new FormData());
+  //   input.onChange = async (e) => {
+  //     const file = e.target.files[0];
+  //     //console.log(file);
+  //     const formData = new FormData();
+  //     console.log([...formData]);
+  //     formData.append("image", file);
+  //     console.log([...formData]);
+  //     //var fileName = file.name;
+  //     const quill = quillRef.current.getEditor();
+  //     console.log(quill);
+  //     const range = quill.getSelection(true);
 
-      // Insert temporary loading placeholder image
-      quill.insertEmbed(
-        range.index,
-        "image",
-        `${window.location.origin}/images/loaders/placeholder.gif`
-      );
+  //     // Insert temporary loading placeholder image
+  //     quill.insertEmbed(
+  //       range.index,
+  //       "image",
+  //       `${window.location.origin}/images/loaders/placeholder.gif`
+  //     );
 
-      // Move cursor to right side of image (easier to continue typing)
-      quill.setSelection(range.index + 1);
-      try {
-        const { data } = await axios.post("/uploadImage", formData);
-        if (data.error) {
-          toast.error(data.error);
-        }
-        console.log("uploaded image=>", data);
-        setImage2({
-          url: data.url,
-          public_id: data.public_id,
-        });
-        quill.deleteText(range.index, 1);
+  //     // Move cursor to right side of image (easier to continue typing)
+  //     quill.setSelection(range.index + 1);
+  //     try {
+  //       const { data } = await axios.post("/uploadImage", formData);
+  //       if (data.error) {
+  //         toast.error(data.error);
+  //       }
+  //       console.log("uploaded image=>", data);
+  //       setImage2({
+  //         url: data.url,
+  //         public_id: data.public_id,
+  //       });
+  //       quill.deleteText(range.index, 1);
 
-        // Insert uploaded image
-        // this.quill.insertEmbed(range.index, 'image', res.body.image);
-        quill.insertEmbed(range.index, "image", data.url);
-        console.log(quill);
-      } catch (err) {
-        console.log(err);
-      }
-      // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
+  //       // Insert uploaded image
+  //       // this.quill.insertEmbed(range.index, 'image', res.body.image);
+  //       quill.insertEmbed(range.index, "image", data.url);
+  //       console.log(quill);
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //     // API post, returns image location as string e.g. 'http://www.example.com/images/foo.png'
 
-      // Remove placeholder image
-    };
-  };
+  //     // Remove placeholder image
+  //   };
+  // };
   let modules = {
     toolbar: {
       container: [
@@ -99,15 +101,18 @@ const CreatePostForm = ({
         ["bold", "italic", "underline"],
         [{ font: [] }],
         [{ size: [] }],
+        [{ script: "sub" }, { script: "super" }],
         [{ color: [] }],
         [{ list: "ordered" }, { list: "bullet" }],
         [{ align: [] }],
+
         [
           "link",
           // "image", "video"
         ],
         ["clean"],
       ],
+      //handlers: { emoji: function () {} },
       // handlers: {
       //   image: imageHandler,
       // },
@@ -122,31 +127,24 @@ const CreatePostForm = ({
     "underline",
     "strike",
     "blockquote",
+    "script",
     "list",
     "bullet",
     "indent",
     "color",
+
     "align",
     "link",
     "image",
     "video",
   ];
 
-  // useEffect(() => {
-  //   if (quillObj) {
-  //     const editor = quillObj.getEditor();
-  //     editor.on("text-change", (delta, oldDelta, source) => {
-  //       setContent(editor.getContents());
-  //     });
-  //   }
-  // }, [quillObj]);
   return (
     <div className="card ">
       <div className="card-body">
         <form className="form-group" onSubmit={postSubmit}>
           <hr />
           <ReactQuill
-            // ref={quillRef}
             value={content}
             onChange={(e) => setContent(e)}
             className="form-control"
@@ -172,7 +170,7 @@ const CreatePostForm = ({
             placeholder="Write What You are thinking"
           ></textarea> */}
           <div className="card-footer d-flex  text-muted">
-            <label className=" justify-content-left m-2 py-2">
+            <label className=" justify-content-start m-2 py-2">
               {image && image.url ? (
                 <Avatar size={30} src={image.url} className="mt-1" />
               ) : uploading ? (
@@ -185,10 +183,14 @@ const CreatePostForm = ({
                 type="File"
                 className=" m-2 py-2"
                 accept="image/*"
+                value={value}
                 onChange={handleImage2}
                 hidden
               />
             </label>
+            {/* <div>
+              <button onClick={handleEmojiClick}>Emoji</button>
+            </div> */}
             <div className="justify-content-end">
               <button
                 onClick={postUpload}
@@ -211,8 +213,6 @@ const CreatePostForm = ({
           </div>
         </form>
       </div>
-      <script src="/dist/quill.js"></script>
-      <script src="/dist/quill.imageUploader.min.js"></script>
     </div>
   );
 };

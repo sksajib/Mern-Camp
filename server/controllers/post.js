@@ -5,12 +5,12 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_KEY,
   api_secret: process.env.CLOUDINARY_SECRET,
 });
-const createPost = (req, res) => {
+const createPost = async (req, res) => {
   try {
     const { content, image } = req.body;
-    console.log(image.url);
+    //console.log(image.url);
     const contentC = content.replaceAll(/\s+/g, " ");
-    console.log(content);
+    //console.log(content);
     const contentClear = contentC.replaceAll(/(<([^>]+)>)/gi, "");
     if (!image.url) console.log("Fuck You");
     if (!content && !image.url) {
@@ -23,14 +23,18 @@ const createPost = (req, res) => {
       return res.status(400).send("Create a valid post");
     }
     if ((content && contentClear !== " " && contentClear !== "") || image.url) {
-      console.log(contentC);
+      // console.log(contentC);
       if (
         content &&
         contentClear !== " " &&
         contentClear !== "" &&
         !image.url
       ) {
-        const post = new Post({ content: contentC, postedBy: req.auth._id });
+        const post = new Post({
+          content: contentC,
+          image: "",
+          postedBy: req.auth._id,
+        });
         post.save();
         return res.json(post);
       }
@@ -40,7 +44,7 @@ const createPost = (req, res) => {
       ) {
         const post = new Post({
           content: contentC,
-          image,
+          image: image.url,
           postedBy: req.auth._id,
         });
         post.save();
@@ -49,35 +53,42 @@ const createPost = (req, res) => {
       if (content && contentClear !== " " && contentClear !== "" && image.url) {
         const post = new Post({
           content: contentC,
-          image,
+          image: image.url,
           postedBy: req.auth._id,
         });
-        post.save();
+        await post.save();
         return res.json(post);
       }
     }
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(400).send(err);
   }
 };
 const uploadImage = async (req, res) => {
   //console.log("request files=>", req.files);
   try {
+    const { url } = req.body;
+    //console.log(image);
+    if (url) {
+      const result2 = await cloudinary.uploader.destroy(url);
+    }
     const result = await cloudinary.uploader.upload(req.files.image.path);
+
     //console.log("uploaded image url=>", result);
     res.json({
       url: result.secure_url,
       public_id: result.public_id,
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
   }
 };
 const postByUser = async (req, res) => {
   try {
-    const posts = await Post.find({ postedBy: req.auth._id })
-      .populate("postedBy", "_id name image")
+    //const posts = await Post.find({ postedBy: req.auth._id })//returning posts only by the logged in user
+    const posts = await Post.find() //returning all posts
+      .populate("postedBy", "_id name photo")
       .sort({ createdAt: -1 })
       .limit(10);
     res.json(posts);
@@ -85,4 +96,106 @@ const postByUser = async (req, res) => {
     console.log(err);
   }
 };
-module.exports = { createPost, uploadImage, postByUser };
+const userPost = async (req, res) => {
+  try {
+    //console.log(req);
+    const post = await Post.findById(req.params._id);
+    res.json(post);
+  } catch (err) {
+    //console.log(err);
+  }
+};
+const clearImage = async (req, res) => {
+  try {
+    const image = req.body.image;
+    if (image) {
+      const publicId = image.split("/").pop().split(".")[0];
+      const result = await cloudinary.uploader.destroy(publicId);
+      console.log("Deleted Succesfully ", image);
+      res.send({ ok: true });
+    } else {
+      res.send({ ok: true });
+    }
+  } catch (err) {
+    //console.log(err);
+    res.status(400);
+  }
+};
+
+const userPostUpdate = async (req, res) => {
+  try {
+    const { content, image } = req.body;
+    const _id = req.params._id;
+    const contentC = content.replaceAll(/\s+/g, " ");
+    console.log(content);
+    console.log(image);
+    const contentClear = contentC.replaceAll(/(<([^>]+)>)/gi, "");
+    //if (!image.url) console.log("Fuck You");
+    if (!content && !image) {
+      return res.status(400).send("Invalid Post");
+    }
+    if (
+      ((content && contentClear === " ") || (content && contentClear === "")) &&
+      !image
+    ) {
+      return res.status(400).send("Invalid Post");
+    }
+    if ((content && contentClear !== " " && contentClear !== "") || image) {
+      //console.log(contentC);
+      if (content && contentClear !== " " && contentClear !== "" && !image) {
+        const ok = await Post.updateOne({ _id: _id }, { content: contentC });
+        const ok2 = await Post.updateOne(
+          { _id: _id },
+
+          { image: "" }
+        );
+
+        return res.send("Successfull");
+      }
+      if (!(content && contentClear !== " " && contentClear !== "") && image) {
+        const ok = await Post.updateOne({ _id: _id }, { content: contentC });
+        const ok2 = await Post.updateOne(
+          { _id: _id },
+
+          { image: image }
+        );
+
+        return res.send("Successfull");
+      }
+      if (content && contentClear !== " " && contentClear !== "" && image) {
+        const ok = await Post.updateOne({ _id: _id }, { image: image });
+        const ok2 = await Post.updateOne({ _id: _id }, { content: contentC });
+
+        return res.send("Successfull");
+      }
+    }
+  } catch (err) {
+    //console.log(err);
+    res.status(400);
+  }
+};
+const userPostDelete = async (req, res) => {
+  try {
+    const post = await Post.findByIdAndDelete(req.params._id);
+    console.log(post);
+    if (post.image) {
+      const imageURL = post.image;
+      const publicId = imageURL.split("/").pop().split(".")[0];
+      const image = await cloudinary.uploader.destroy(publicId);
+      console.log("Deleted Succesfully ", image);
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.log(err);
+    res.status(404).send("Unsuccessfull");
+  }
+};
+module.exports = {
+  createPost,
+  uploadImage,
+  postByUser,
+  userPost,
+  clearImage,
+  userPostUpdate,
+  userPostDelete,
+};

@@ -28,6 +28,11 @@ const userSchema = new Schema(
       trim: true,
       required: true,
     },
+    userName: {
+      type: String,
+      unique: true,
+      required: true,
+    },
     about: {},
     photo: String,
     following: [{ type: Schema.ObjectId, ref: "User" }],

@@ -9,9 +9,11 @@ import PostList from "../../components/cards/PostList";
 import { Avatar } from "antd";
 const dashboard = () => {
   const [state, setState] = useContext(UserContext);
-  const [image, setImage] = useState({});
+  const [image, setImage] = useState("");
   const [dp, setDp] = useState({});
-  if (!dp.url) {
+  const [value, setValue] = useState("");
+  let url = "";
+  if (!dp.url && state !== null) {
     dp.url = state.user.photo;
   }
   let dpChange;
@@ -42,20 +44,20 @@ const dashboard = () => {
       if (data.length > 0) {
         setPosts(data);
       }
-      console.log("User Posts =>", data.length);
+      //console.log("User Posts =>", data.length);
     } catch (err) {}
   };
   const postSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
-    console.log(content);
+
     try {
       const { data } = await axios.post("/createPost", { content, image });
       if (data.error) {
         toast.error(data.error);
       }
       console.log("Create Post Response =>", data);
-
+      window.location.reload();
       // console.log("Create Post Response =>", content);
       toast.success("Post Created");
       setImage({});
@@ -68,28 +70,36 @@ const dashboard = () => {
       fetchUserPosts();
     }
   };
-  const postUpload = (e) => {
+  const postUpload = async (e) => {
     e.preventDefault();
     setContent("");
     setContent("");
-    setImage({});
+    const data = await axios.post("/clear-photo", url);
+    setImage("");
     setUploading(false);
   };
 
   const handleImage2 = async (e) => {
+    e.preventDefault();
+    console.log("1");
     const file = e.target.files[0];
+    console.log(e.target.files);
     const formData2 = new FormData();
 
     formData2.append("image", file);
     // console.log([...formData2]);
     setUploading(true);
     try {
-      const { data } = await axios.post("/uploadImage", formData2);
-      console.log("uploaded image=>", data);
+      const { data } = await axios.post("/uploadImage", formData2, url);
+      //console.log("uploaded image=>", data);
       setImage({
         url: data.url,
         public_id: data.public_id,
       });
+      setValue("");
+      url = data.url;
+      console.log(url);
+      //console.log("image=>", image);
       setUploading(false);
       if (data.error) {
         toast.error(data.error);
@@ -141,16 +151,16 @@ const dashboard = () => {
         <div className="container-fluid container text-dark">
           <div className="row py-3 bg-default-img text-dark">
             <div className="d-inline col-md-10">
-              <h2>News Feed</h2>
+              <h2>Timeline</h2>
             </div>
             <div className="dp d-inline col-md-2">
               <label>
                 {!state.user.photo ? (
-                  <Avatar size={50} className="mt-1">
+                  <Avatar size={60} className="mt-1">
                     {state.user.name.charAt(0)}
                   </Avatar>
                 ) : (
-                  <Avatar src={state.user.photo} size={50} className="mt-1" />
+                  <Avatar src={state.user.photo} size={60} className="mt-1" />
                 )}
                 <input
                   type="File"
@@ -176,6 +186,7 @@ const dashboard = () => {
                 handleImage2={handleImage2}
                 uploading={uploading}
                 image={image}
+                value={value}
               />
               <pre>
                 <PostList posts={posts} />

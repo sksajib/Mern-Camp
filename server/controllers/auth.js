@@ -1,6 +1,8 @@
 const User = require("../Models/user");
+const { nanoid } = require("nanoid");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
+// const nanoid = require("nanoid");
 const register = async (req, res) => {
   // console.log("Register endpoint=>", req.body);
 
@@ -51,6 +53,7 @@ const register = async (req, res) => {
     password: hashedPassword,
     question,
     secret: secretUpper,
+    userName: nanoid(8),
     photo: "",
   });
   try {
@@ -176,4 +179,32 @@ const addPicture = async (req, res) => {
     return res.status(400).send("Something Went Wrong");
   }
 };
-module.exports = { register, login, currentUser, forgotPassword, addPicture };
+const updateProfile = (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      oldPassword,
+      password,
+      confirmPassword,
+      secret,
+      question,
+      image,
+      userid,
+      changeSecret,
+      changePassword,
+    } = req.body;
+    res.JSON({ ok: true });
+  } catch (err) {
+    console.log(err);
+    res.status(err);
+  }
+};
+module.exports = {
+  register,
+  login,
+  currentUser,
+  forgotPassword,
+  addPicture,
+  updateProfile,
+};
