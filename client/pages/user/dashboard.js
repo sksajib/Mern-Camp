@@ -150,17 +150,21 @@ const dashboard = () => {
       <UserRoute>
         <div className="container-fluid container text-dark">
           <div className="row py-3 bg-default-img text-dark">
-            <div className="d-inline col-md-10">
+            <div className="d-inline col-md-11">
               <h2>Timeline</h2>
             </div>
-            <div className="dp d-inline col-md-2">
+            <div className=" d-inline col-md-1">
               <label>
                 {!state.user.photo ? (
-                  <Avatar size={60} className="mt-1">
+                  <Avatar size={60} className="mt-1 dp">
                     {state.user.name.charAt(0)}
                   </Avatar>
                 ) : (
-                  <Avatar src={state.user.photo} size={60} className="mt-1" />
+                  <Avatar
+                    src={state.user.photo}
+                    size={60}
+                    className="mt-1 dp"
+                  />
                 )}
                 <input
                   type="File"

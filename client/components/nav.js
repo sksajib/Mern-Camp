@@ -2,7 +2,12 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { UserContext } from "../context";
 import { useContext, useEffect, useState } from "react";
-
+import {
+  MessageOutlined,
+  MessageTwoTone,
+  CaretLeftOutlined,
+} from "@ant-design/icons";
+import { Avatar } from "antd";
 const Nav = () => {
   const [state, setState] = useContext(UserContext);
   const [current, setCurrent] = useState(state);
@@ -50,26 +55,26 @@ const Nav = () => {
     <div className="container sticky-top">
       <div className="row">
         <nav
-          className="col-3 nav sticky-top bg-light text-dark justify-content-left "
-          style={{ height: "75px" }}
+          className="col-1 nav sticky-top bg-light text-dark justify-content-left "
+          style={{ height: "73px" }}
         >
           <div>
             <img
               src="/images/Unite.png"
               alt="image"
-              height={"60"}
-              width={"60"}
+              height={"60px"}
+              width={"65"}
             />
           </div>
         </nav>
 
         <nav
-          className=" col-9 nav sticky-top bg-light text-dark justify-content-end "
-          style={{ height: "75px" }}
+          className=" col-11 nav sticky-top bg-light text-dark justify-content-end "
+          style={{ height: "73px" }}
         >
           <div>
             <Link href="/" className={`nav-link text-dark  ${isActive("/")}`}>
-              <h2>Unite</h2>
+              <h3 className="pt-1">Home</h3>
             </Link>
           </div>
           {state === null && (
@@ -79,7 +84,7 @@ const Nav = () => {
                   href="/login"
                   className={`nav-link text-dark ${isActive("/login")}`}
                 >
-                  <h2>Login</h2>
+                  <h3>Login</h3>
                 </Link>
               </div>
               <div>
@@ -87,7 +92,7 @@ const Nav = () => {
                   href="/register"
                   className={`nav-link text-dark ${isActive("/register")}`}
                 >
-                  <h2>Register</h2>
+                  <h3>Register</h3>
                 </Link>
               </div>
             </>
@@ -96,17 +101,27 @@ const Nav = () => {
 
           {state && state.token && (
             <>
+              <div>
+                <Link href="/" className=" text-dark">
+                  <Avatar src="/images/message.png" size={72} className="dp" />
+                </Link>
+              </div>
+
               <div className=" dropdown" style={{}}>
                 <a
                   role="button"
                   href="/user/dashboard"
-                  className={`nav-link text-dark ${isActive(
-                    "/user/dashboard"
-                  )}`}
+                  className={`nav-link text-dark  ${
+                    isActive("/user/dashboard") ||
+                    isActive("/user/profile/update")
+                  }`}
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <h2>{state && state.user && name}</h2>
+                  <h3 className="pt-1">
+                    <CaretLeftOutlined className="me-3" />
+                    {state && state.user && name}
+                  </h3>
                 </a>
                 <ul
                   className="dropdown-menu dropdown-menu-end"
@@ -121,7 +136,17 @@ const Nav = () => {
                       href="/user/dashboard"
                       aria-expanded="false"
                     >
-                      <h3>Profile</h3>
+                      <h4>Profile</h4>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      className={`nav-link text-dark ${isActive(
+                        "/user/profile/update"
+                      )}`}
+                      href="/user/profile/update"
+                    >
+                      <h4>Update Profile</h4>
                     </a>
                   </li>
                   <li>
@@ -138,7 +163,7 @@ const Nav = () => {
                   <li>
                     <div className="nav-link text-dark">
                       <a onClick={logout}>
-                        <h2>Logout</h2>
+                        <h4>Logout</h4>
                       </a>
                     </div>
                   </li>
