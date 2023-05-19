@@ -1,4 +1,5 @@
 const Post = require("../Models/post");
+const User = require("../Models/user");
 
 const { expressjwt: jwt } = require("express-jwt");
 const requireSignin = jwt({
@@ -15,4 +16,16 @@ const canEditDelete = async (req, res, next) => {
     }
   } catch (err) {}
 };
-module.exports = { requireSignin, canEditDelete };
+const canUpdateProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.body.id);
+    if (req.auth._id != user._id) {
+      res.status(400).send("Unauthorized");
+    } else {
+      next();
+    }
+  } catch (err) {
+    res.status(400).send("Unexpected error Occured");
+  }
+};
+module.exports = { requireSignin, canEditDelete, canUpdateProfile };

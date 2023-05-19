@@ -1,7 +1,6 @@
 import { SyncOutlined, CameraFilled, LoadingOutlined } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import { Avatar } from "antd";
-//import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "react-quill/dist/quill.core.css";
 import "react-quill/dist/quill.bubble.css";
@@ -140,14 +139,6 @@ const CreatePostForm = ({
     "video",
   ];
 
-  // useEffect(() => {
-  //   if (quillObj) {
-  //     const editor = quillObj.getEditor();
-  //     editor.on("text-change", (delta, oldDelta, source) => {
-  //       setContent(editor.getContents());
-  //     });
-  //   }
-  // }, [quillObj]);
   return (
     <div className="card ">
       <div className="card-body">

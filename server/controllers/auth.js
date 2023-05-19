@@ -179,4 +179,32 @@ const addPicture = async (req, res) => {
     return res.status(400).send("Something Went Wrong");
   }
 };
-module.exports = { register, login, currentUser, forgotPassword, addPicture };
+const updateProfile = (req, res) => {
+  try {
+    const {
+      name,
+      email,
+      oldPassword,
+      password,
+      confirmPassword,
+      secret,
+      question,
+      image,
+      userid,
+      changeSecret,
+      changePassword,
+    } = req.body;
+    res.JSON({ ok: true });
+  } catch (err) {
+    console.log(err);
+    res.status(err);
+  }
+};
+module.exports = {
+  register,
+  login,
+  currentUser,
+  forgotPassword,
+  addPicture,
+  updateProfile,
+};
