@@ -5,9 +5,11 @@ import UpdateAuthForm from "../../../components/forms/UpdateAuthForm";
 import { UserContext } from "../../../context";
 import { useRouter } from "next/router";
 import UserRoute from "../../../components/routes/UserRoute";
+import { UserProvider } from "../../../context";
 const ProfileUpdate = () => {
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
@@ -21,69 +23,36 @@ const ProfileUpdate = () => {
   const buttonValue = "Update";
   const [id, setId] = useState("");
   const [userName, setUserName] = useState("");
+  const [value, setValue] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   const [changePassword, setChangePassword] = useState(false);
   const [changeSecret, setChangeSecret] = useState(false);
+  let effect = 0;
+
   useEffect(() => {
     if (state) {
-      setName(state.user.name);
-      setEmail(state.user.email);
-      setImage(state.user.photo);
-      setId(state.user._id);
-      setUserName(state.user.userName);
-    }
-  }, [state]);
+      if (!name) {
+        setName(state.user.name);
+      }
+      if (!email) {
+        setEmail(state.user.email);
+      }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    const auth2 = JSON.parse(window.localStorage.getItem("auth"));
-    if (auth2 && auth2.token !== state.token) {
-      window.location.reload();
-    }
-    if (!auth2) {
-      router.push("/login");
-    }
-    if (auth2 && auth2.token === state.token) {
-      try {
-        setLoading(true);
-        const { data } = await axios.post(`/update-user`, {
-          name,
-          email,
-          oldPassword,
-          password,
-          confirmPassword,
-          question,
-          secret,
-          id,
-          image,
-          userName,
-          changePassword,
-          changeSecret,
-        });
-        //for clearing the input after successfull registration
-        window.localStorage.setItem("auth", JSON.stringify(data));
-        setLoading(false);
-        toast.success("User Information Updated");
-        setOk(data.ok);
-      } catch (err) {
-        toast.error(err);
-        setLoading(false);
+      if (!id) {
+        setId(state.user._id);
+      }
+      if (!userName) {
+        setUserName(state.user.userName);
+      }
+
+      if (!image) {
+        setImage(state.user.photo);
       }
     }
-  };
-  const handleImage = async (e) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
-
-    try {
-      const { data } = await axios.post("/uploadImage", formData);
-      setImage(data.url);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+    console.log(changePassword);
+    console.log(image);
+  }, [state, image, name, email, id, userName, changePassword]);
 
   if (!state) {
     router.push("/login");
@@ -102,11 +71,10 @@ const ProfileUpdate = () => {
           </div>
           <div className="row">
             <div
-              style={{ height: "360px", width: "100%", padding: "15px" }}
+              style={{ height: "500px", width: "100%", padding: "15px" }}
               className="py-2 overflow-auto card md-2"
             >
               <UpdateAuthForm
-                handleSubmit={handleSubmit}
                 name={name}
                 setName={setName}
                 email={email}
@@ -115,9 +83,10 @@ const ProfileUpdate = () => {
                 setOldPassword={setOldPassword}
                 password={password}
                 setPassword={setPassword}
-                handleImage={handleImage}
                 image={image}
                 setImage={setImage}
+                value={value}
+                setValue={setValue}
                 confirmPassword={confirmPassword}
                 setConfirmPassword={setConfirmPassword}
                 question={question}
@@ -125,6 +94,7 @@ const ProfileUpdate = () => {
                 secret={secret}
                 setSecret={setSecret}
                 loading={loading}
+                setLoading={setLoading}
                 buttonValue={buttonValue}
                 userName={userName}
                 setUserName={setUserName}
@@ -132,6 +102,9 @@ const ProfileUpdate = () => {
                 setChangePassword={setChangePassword}
                 changeSecret={changeSecret}
                 setChangeSecret={setChangeSecret}
+                uploading={uploading}
+                setUploading={setUploading}
+                id={id}
               />
             </div>
           </div>

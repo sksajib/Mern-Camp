@@ -10,13 +10,13 @@ const register = async (req, res) => {
     req.body;
   const nameC = name.replaceAll(/\s+/g, " ");
   const secretC = secret.replaceAll(/\s+/g, " ");
-  const passC = password.replaceAll(/\s+/g, "");
+  //const passC = password.replaceAll(/\s+/g, "");
 
   //validation
   if (!nameC || nameC == " ") return res.status(400).send("Name is required");
   if (!email) return res.status(400).send("Email is required");
   const emailUpper = email.toUpperCase();
-  if (!passC || passC.length < 8)
+  if (!password || password.length < 8)
     return res
       .status(400)
       .send(
@@ -179,7 +179,7 @@ const addPicture = async (req, res) => {
     return res.status(400).send("Something Went Wrong");
   }
 };
-const updateProfile = (req, res) => {
+const updateProfile = async (req, res) => {
   try {
     const {
       name,
@@ -190,14 +190,248 @@ const updateProfile = (req, res) => {
       secret,
       question,
       image,
-      userid,
+      id,
+      userName,
       changeSecret,
       changePassword,
     } = req.body;
-    res.JSON({ ok: true });
+    const user = await User.findById(id);
+    const nameC = name.replaceAll(/\s+/g, " ");
+    const hasWhiteSpace = /\s/.test(userName);
+
+    if (hasWhiteSpace === true)
+      res.status(400).send("User Name can't have white space");
+    const hasAlphaNumeric = /^[a-zA-Z0-9]+$/.test(userName);
+    if (hasAlphaNumeric === false)
+      return res
+        .status(400)
+        .send("User Name should only contain AlphaNumeric characters");
+
+    if (userName.length !== 8)
+      return res.status(400).send("User Name should be 8 characters long");
+    if (
+      hasWhiteSpace === false &&
+      hasAlphaNumeric === true &&
+      userName.length === 8
+    ) {
+      const users = await User.find({ userName: userName });
+      for (let i = 0; i < users.length; i++) {
+        if (users[i]._id != req.auth._id) {
+          console.log(users[i]._id, " ", id);
+          return res
+            .status(400)
+            .send("User Name Not Available, Choose Another One");
+        }
+      }
+    }
+
+    if (!name || nameC === " ") return res.status(400).send("Name is required");
+    if (!email) return res.status(400).send("Email is required");
+    const hasWhiteSpaceEmail = /\s/.test(email);
+    if (hasWhiteSpaceEmail === true)
+      return res.status(400).send("Email can't have white space");
+    const emailUpper = email.toUpperCase();
+    if (email && hasWhiteSpaceEmail === false) {
+      const users = await User.find({ email: emailUpper });
+      for (let i = 0; i < users.length; i++) {
+        if (users[i]._id != req.auth._id) {
+          return res.status(400).send("Email is already used");
+        }
+      }
+    }
+    const match = await comparePassword(oldPassword, user.password);
+    if (!match) return res.status(400).send("Current Password is not Correct");
+    if (match) {
+      if (changePassword && !changeSecret) {
+        if (!password || password.length < 8) {
+          return res
+            .status(400)
+            .send(
+              "Enter Your new password that should be minimum 8 characters long"
+            );
+        }
+
+        if (password !== confirmPassword) {
+          return res.status(400).send("New Password Don't match");
+        }
+        if (password === oldPassword) {
+          return res
+            .status(400)
+            .send("New Password and old Password can't be same");
+        }
+        if (
+          password &&
+          password.length >= 8 &&
+          password === confirmPassword &&
+          password !== oldPassword
+        ) {
+          const hashedPassword = await hashPassword(password);
+
+          const update = {
+            $set: {
+              userName: userName,
+              name: nameC,
+              email: emailUpper,
+              photo: image,
+              password: hashedPassword,
+            },
+          };
+          const ok = await User.updateOne({ _id: id }, update);
+          const user = await User.findById(id);
+          const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1d",
+          });
+          //console.log(user);
+          user.password = undefined;
+          user.secret = undefined;
+          user.question = undefined;
+          const user2 = { token, user };
+          console.log(user2);
+          return res.json({
+            token,
+            user,
+          });
+        }
+      }
+      if (changePassword && changeSecret) {
+        if (!password || password.length < 8) {
+          return res
+            .status(400)
+            .send(
+              "Enter Your new password that should be minimum 8 characters long"
+            );
+        }
+
+        if (password !== confirmPassword) {
+          return res.status(400).send("New Password Don't match");
+        }
+        if (password === oldPassword) {
+          return res
+            .status(400)
+            .send("New Password and old Password can't be same");
+        }
+        if (
+          password &&
+          password.length >= 8 &&
+          password === confirmPassword &&
+          password !== oldPassword
+        ) {
+          const secretC = secret.replaceAll(/\s+/g, " ");
+          if (secretC === " ")
+            return res
+              .status(400)
+              .send("Enter Valid Answer to secret question");
+          const secretUpper = secretC.toUpperCase();
+          const hashedPassword = await hashPassword(password);
+          if (secret && secretC !== " ") {
+            const update = {
+              $set: {
+                userName: userName,
+                name: nameC,
+                email: emailUpper,
+                photo: image,
+                password: hashedPassword,
+                question: question,
+                secret: secretUpper,
+              },
+            };
+            const ok = await User.updateOne({ _id: id }, update);
+            const user = await User.findById(id);
+            const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+              expiresIn: "1d",
+            });
+            //console.log(user);
+            user.password = undefined;
+            user.secret = undefined;
+            user.question = undefined;
+            const user2 = { token, user };
+            console.log(user2);
+            return res.json({
+              token,
+              user,
+            });
+          }
+        }
+      }
+      if (!changePassword && changeSecret) {
+        const secretC = secret.replaceAll(/\s+/g, " ");
+        if (secretC === " ")
+          return res.status(400).send("Enter Valid Answer to secret question");
+        const secretUpper = secretC.toUpperCase();
+        if (secret && secretC !== " ") {
+          const update = {
+            $set: {
+              userName: userName,
+              name: nameC,
+              email: emailUpper,
+              photo: image,
+              question: question,
+              secret: secretUpper,
+            },
+          };
+          const ok = await User.updateOne({ _id: id }, update);
+          const user = await User.findById(id);
+          const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "1d",
+          });
+          //console.log(user);
+          user.password = undefined;
+          user.secret = undefined;
+          user.question = undefined;
+          const user2 = { token, user };
+          console.log(user2);
+          return res.json({
+            token,
+            user,
+          });
+        }
+      }
+      if (!changePassword && !changeSecret) {
+        const update = {
+          $set: {
+            userName: userName,
+            name: nameC,
+            email: emailUpper,
+            photo: image,
+          },
+        };
+
+        const ok1 = await User.updateOne(
+          { _id: req.auth._id },
+          { userName: userName }
+        );
+        const ok2 = await User.updateOne(
+          { _id: req.auth._id },
+          { name: nameC }
+        );
+        const ok3 = await User.updateOne(
+          { _id: req.auth._id },
+          { email: emailUpper }
+        );
+        const ok4 = await User.updateOne(
+          { _id: req.auth._id },
+          { photo: image }
+        );
+        const user = await User.findById(req.auth._id);
+        const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+          expiresIn: "1d",
+        });
+        //console.log(user);
+        user.password = undefined;
+        user.secret = undefined;
+        user.question = undefined;
+        //const user = { token, user3 };
+        //console.log(user2);
+        console.log(user);
+        return res.json({
+          token,
+          user,
+        });
+      }
+    }
   } catch (err) {
     console.log(err);
-    res.status(err);
+    return res.send(400).status(err);
   }
 };
 module.exports = {

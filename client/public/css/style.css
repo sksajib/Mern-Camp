@@ -87,11 +87,17 @@ nav {
   cursor: pointer;
 }
 .margin {
-  margin-right: 44%;
+  margin-right: 34%;
 }
 .size3 {
   font-size: 25px;
 }
 .btnDropNav {
   border-radius: 45%;
+}
+.size4 {
+  font-size: 29px;
+}
+.dp:hover {
+  cursor: pointer;
 }
