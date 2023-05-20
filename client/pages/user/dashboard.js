@@ -21,6 +21,7 @@ const dashboard = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState("");
+  // const [people, setPeople] = useState("");
   // console.log(state.user.photo);
   let name = "";
   if (state && state.user) {
@@ -31,7 +32,10 @@ const dashboard = () => {
   // console.log(`${state.user.name}  ${state.user.email}`);
   const router = useRouter();
   useEffect(() => {
-    if (state && state.token) fetchUserPosts();
+    if (state && state.token) {
+      fetchUserPosts();
+      // findPeople();
+    }
   }, [state && state.token]);
   const [content, setContent] = useState("");
   console.log(content);
@@ -40,13 +44,24 @@ const dashboard = () => {
 
   const fetchUserPosts = async () => {
     try {
-      const { data } = await axios.get("/user-posts");
+      const { data } = await axios.get("/user-posts-loggedin");
       if (data.length > 0) {
         setPosts(data);
       }
       //console.log("User Posts =>", data.length);
     } catch (err) {}
   };
+  // const findPeople = async () => {
+  //   try {
+  //     const { data } = await axios.get("/find-people");
+  //     if (data.length > 0) {
+  //       setPeople(data);
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error(err);
+  //   }
+  // };
   const postSubmit = async (e) => {
     setLoading(true);
     e.preventDefault();
@@ -180,7 +195,7 @@ const dashboard = () => {
             className="row py-2 ml-0"
             style={{ height: "100%", width: "100%" }}
           >
-            <div className="col-md-10">
+            <div className="col-md-12">
               <CreatePostForm
                 postUpload={postUpload}
                 postSubmit={postSubmit}
@@ -197,7 +212,9 @@ const dashboard = () => {
               </pre>
             </div>
 
-            <div className="col-md-2">Sidebar</div>
+            {/* <div className="col-md-2">
+              <pre>{JSON.stringify(people, null, 2)}</pre>
+            </div> */}
           </div>
         </div>
       </UserRoute>

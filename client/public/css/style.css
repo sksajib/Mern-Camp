@@ -101,3 +101,11 @@ nav {
 .dp:hover {
   cursor: pointer;
 }
+
+.margintop {
+  margin-top: 10px !important;
+}
+.follow:hover {
+  background-color: aquamarine;
+  cursor: pointer;
+}

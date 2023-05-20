@@ -235,9 +235,9 @@ const UpdateAuthForm = ({
           <small>
             <label className=" py-2">Pick a question</label>
 
-            <label className=" py-2">
+            {/* <label className=" py-2">
               Select Your Secret Question to reset the password
-            </label>
+            </label> */}
           </small>
           <select
             className="form-control py-2"

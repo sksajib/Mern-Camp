@@ -37,6 +37,7 @@ const userSchema = new Schema(
     photo: String,
     following: [{ type: Schema.ObjectId, ref: "User" }],
     followers: [{ type: Schema.ObjectId, ref: "User" }],
+    pendingRequests: [{ type: Schema.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

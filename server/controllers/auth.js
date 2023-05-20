@@ -1,4 +1,6 @@
 const User = require("../Models/user");
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 const { nanoid } = require("nanoid");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
@@ -434,6 +436,166 @@ const updateProfile = async (req, res) => {
     return res.send(400).status(err);
   }
 };
+const findPeople = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    //user.following
+    let following = user.following;
+    let followers = user.followers;
+    following.push(user._id);
+    if (user.pendingRequests) {
+      let pending = user.pendingRequests;
+      for (let i = 0; i < pending.length; i++) {
+        following.push(pending[i]);
+      }
+    }
+    if (followers) {
+      for (let i = 0; i < followers.length; i++) {
+        following.push(followers[i]);
+      }
+    }
+    const people = await User.find({ _id: { $nin: following } }).limit(20);
+
+    if (people.length > 0) {
+      for (let i = 0; i < people.length; i++) {
+        people[i].email = undefined;
+        people[i].password = undefined;
+        people[i].question = undefined;
+        people[i].userName = undefined;
+        people[i].secret = undefined;
+        people[i].following = undefined;
+        people[i].followers = undefined;
+        people[i].pendingRequests = undefined;
+        people[i].createdAt = undefined;
+        people[i].updatedAt = undefined;
+        people[i].__v = undefined;
+        people[i].createdAt = undefined;
+      }
+    }
+    console.log(people);
+    res.json(people);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+};
+const sentRequest = async (req, res) => {
+  try {
+    const { _id, id } = req.body;
+    console.log(_id, " ", id);
+
+    const user = await User.findById(req.auth._id);
+    const pendingUsers = user.pendingRequests;
+    const requestReceivedUser = await User.findById(_id);
+    const pendingFollwers = requestReceivedUser.followers;
+    let exist = 0;
+    if (pendingFollwers) {
+      for (let i = 0; i < pendingFollwers.length; i++) {
+        if (req.auth._id == pendingFollwers[i]) {
+          exist = 1;
+          pendingFollwers.pop(req.auth._id);
+          const ok = await User.updateOne(
+            { _id: _id },
+            {
+              $set: {
+                followers: pendingFollwers,
+              },
+            }
+          );
+          break;
+        }
+      }
+
+      if (exist === 0) {
+        pendingFollwers.push(req.auth._id);
+        const ok = await User.updateOne(
+          { _id: _id },
+          {
+            $set: {
+              followers: pendingFollwers,
+            },
+          }
+        );
+      }
+    }
+    let followerArray = [];
+    followerArray[0] = req.auth._id;
+    if (!pendingFollwers) {
+      const ok = await User.updateOne(
+        { _id: _id },
+        {
+          $set: {
+            followers: followerArray,
+          },
+        }
+      );
+    }
+    if (pendingUsers) {
+      for (let i = 0; i < pendingUsers.length; i++) {
+        if (_id == pendingUsers[i]) {
+          pendingUsers.pop(_id);
+          const ok = await User.updateOne(
+            { _id: req.auth._id },
+            {
+              $set: {
+                pendingRequests: pendingUsers,
+              },
+            }
+          );
+          const updateduser = await User.findById(req.auth._id);
+          return res.send(updateduser);
+        }
+      }
+    }
+    let arrayRequests = [];
+    if (user.pendingRequests) {
+      pendingUsers.push(_id);
+    }
+    console.log(pendingUsers);
+    if (!pendingUsers) {
+      arrayRequests[0] = _id;
+      console.log(arrayRequests);
+      const ok = await User.updateOne(
+        { _id: req.auth._id },
+        {
+          $set: {
+            pendingRequests: arrayRequests,
+          },
+        }
+      );
+      const updateduser = await User.findById(req.auth._id);
+      updateduser.password = undefined;
+      updateduser.secret = undefined;
+      updateduser.createdAt = undefined;
+      updateduser.question = undefined;
+      updateduser.updatedAt = undefined;
+      updateduser.followers = undefined;
+      updateduser.following = undefined;
+      return res.send(updateduser);
+    } else {
+      const ok = await User.updateOne(
+        { _id: req.auth._id },
+        {
+          $set: {
+            pendingRequests: pendingUsers,
+          },
+        }
+      );
+      const updateduser = await User.findById(req.auth._id);
+      updateduser.password = undefined;
+      updateduser.secret = undefined;
+      updateduser.createdAt = undefined;
+      updateduser.question = undefined;
+      updateduser.updatedAt = undefined;
+      updateduser.followers = undefined;
+      updateduser.following = undefined;
+      return res.send(updateduser);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
 module.exports = {
   register,
   login,
@@ -441,4 +603,6 @@ module.exports = {
   forgotPassword,
   addPicture,
   updateProfile,
+  findPeople,
+  sentRequest,
 };

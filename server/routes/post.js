@@ -4,6 +4,7 @@ const {
   createPost,
   uploadImage,
   postByUser,
+  postByLoggedInUser,
   userPost,
   clearImage,
   userPostUpdate,
@@ -20,6 +21,7 @@ router.post(
   uploadImage
 );
 router.get("/user-posts", requireSignin, postByUser);
+router.get("/user-posts-loggedin", requireSignin, postByLoggedInUser);
 router.get(`/user-post/:_id`, requireSignin, userPost);
 router.post("/clear-photo/:_id", requireSignin, canEditDelete, clearImage);
 router.post(`/post-update/:_id`, requireSignin, canEditDelete, userPostUpdate);

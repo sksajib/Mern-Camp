@@ -71,7 +71,7 @@ const ProfileUpdate = () => {
           </div>
           <div className="row">
             <div
-              style={{ height: "500px", width: "100%", padding: "15px" }}
+              style={{ height: "400px", width: "100%", padding: "15px" }}
               className="py-2 overflow-auto card md-2"
             >
               <UpdateAuthForm
