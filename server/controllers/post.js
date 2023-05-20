@@ -96,6 +96,21 @@ const postByUser = async (req, res) => {
     console.log(err);
   }
 };
+const postByLoggedInUser = async (req, res) => {
+  try {
+    //returning posts only by the logged in user
+    //const posts = await Post.find() //returning all posts
+    const posts = await Post.find({ postedBy: req.auth._id })
+
+      .populate("postedBy", "_id name photo")
+      .sort({ createdAt: -1 })
+      .limit(10);
+    res.json(posts);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const userPost = async (req, res) => {
   try {
     //console.log(req);
@@ -194,6 +209,7 @@ module.exports = {
   createPost,
   uploadImage,
   postByUser,
+  postByLoggedInUser,
   userPost,
   clearImage,
   userPostUpdate,

@@ -6,6 +6,7 @@ import {
   MessageOutlined,
   MessageTwoTone,
   CaretLeftOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
 import { Avatar } from "antd";
 const Nav = () => {
@@ -55,21 +56,7 @@ const Nav = () => {
     <div className="container sticky-top">
       <div className="row">
         <nav
-          className="col-1 nav sticky-top bg-light text-dark justify-content-left "
-          style={{ height: "73px" }}
-        >
-          <div>
-            <img
-              src="/images/Unite.png"
-              alt="image"
-              height={"60px"}
-              width={"65"}
-            />
-          </div>
-        </nav>
-
-        <nav
-          className=" col-11 nav sticky-top bg-light text-dark justify-content-end "
+          className=" col-12 nav sticky-top bg-light text-dark justify-content-between "
           style={{ height: "73px" }}
         >
           <div>
@@ -107,7 +94,7 @@ const Nav = () => {
                 </Link>
               </div>
 
-              <div className=" dropdown" style={{}}>
+              <div className=" dropdown">
                 <a
                   role="button"
                   href="/user/dashboard"
@@ -119,8 +106,8 @@ const Nav = () => {
                   aria-expanded="false"
                 >
                   <h3 className="pt-1">
-                    <CaretLeftOutlined className="me-3" />
                     {state && state.user && name}
+                    <CaretDownOutlined className="me-3" />
                   </h3>
                 </a>
                 <ul
