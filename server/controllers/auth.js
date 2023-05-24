@@ -493,7 +493,7 @@ const sentRequest = async (req, res) => {
       for (let i = 0; i < pendingFollwers.length; i++) {
         if (req.auth._id == pendingFollwers[i]) {
           exist = 1;
-          pendingFollwers.pop(req.auth._id);
+          var a = pendingFollwers.splice(i, 1);
           const ok = await User.updateOne(
             { _id: _id },
             {
@@ -533,7 +533,7 @@ const sentRequest = async (req, res) => {
     if (pendingUsers) {
       for (let i = 0; i < pendingUsers.length; i++) {
         if (_id == pendingUsers[i]) {
-          pendingUsers.pop(_id);
+          var a = pendingUsers.splice(i, 1);
           const ok = await User.updateOne(
             { _id: req.auth._id },
             {
@@ -596,6 +596,434 @@ const sentRequest = async (req, res) => {
     return res.send(err);
   }
 };
+const findSentRequest = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    let pending = user.pendingRequests;
+    console.log(pending);
+    if (pending) {
+      const people = await User.find({ _id: pending }).limit(10);
+      console.log(people);
+      if (people.length > 0) {
+        for (let i = 0; i < people.length; i++) {
+          people[i].email = undefined;
+          people[i].password = undefined;
+          people[i].question = undefined;
+          people[i].userName = undefined;
+          people[i].secret = undefined;
+          people[i].following = undefined;
+          people[i].followers = undefined;
+          people[i].pendingRequests = undefined;
+          people[i].createdAt = undefined;
+          people[i].updatedAt = undefined;
+          people[i].__v = undefined;
+          people[i].createdAt = undefined;
+        }
+      }
+      console.log(people);
+      return res.json(people);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const cancelRequest = async (req, res) => {
+  try {
+    const person1Id = req.auth._id; //currently logged in user
+    const person2Id = req.body._id; // User to whom request has been sent or cancel
+    console.log(person1Id, " ", person2Id);
+    const person1 = await User.findById(person1Id);
+    const person2 = await User.findById(person2Id);
+    const pendingRequests = person1.pendingRequests;
+    console.log(pendingRequests);
+    const followRequest = person2.followers;
+    console.log(followRequest);
+    let followers = [];
+    if (!followRequest) {
+      followers[0] = person1Id;
+      const ok = await User.updateOne(
+        { _id: person2Id },
+        {
+          $set: {
+            followers: followers,
+          },
+        }
+      );
+    }
+    if (followRequest) {
+      let count = 0;
+      for (let i = 0; i < followRequest.length; i++) {
+        if (followRequest[i] == person1Id) {
+          count = 1;
+          var a = followRequest.splice(i, 1);
+          const ok = await User.updateOne(
+            { _id: person2Id },
+            { $set: { followers: followRequest } }
+          );
+          break;
+        }
+      }
+      if (count === 0) {
+        followRequest.push(person1Id);
+        const ok = await User.updateOne(
+          { _id: person2Id },
+          { $set: { followers: followRequest } }
+        );
+      }
+    }
+    let personArray = [];
+    if (!pendingRequests) {
+      personArray[0] = person2Id;
+      const ok = await User.updateOne(
+        { _id: req.auth._id },
+        {
+          $set: {
+            pendingRequests: personArray,
+          },
+        }
+      );
+      const updateduser = await User.findById(req.auth._id);
+      updateduser.password = undefined;
+      updateduser.secret = undefined;
+      updateduser.createdAt = undefined;
+      updateduser.question = undefined;
+      updateduser.updatedAt = undefined;
+      updateduser.followers = undefined;
+      updateduser.following = undefined;
+      return res.send(updateduser);
+    }
+    if (pendingRequests) {
+      let count = 0;
+      for (let i = 0; i < pendingRequests.length; i++) {
+        if (pendingRequests[i] == person2Id) {
+          count = 1;
+          var a = pendingRequests.splice(i, 1);
+          const ok = await User.updateOne(
+            { _id: person1Id },
+            { pendingRequests: pendingRequests }
+          );
+          break;
+        }
+      }
+      if (count == 0) {
+        pendingRequests.push(person2Id);
+        const ok = await User.updateOne(
+          { _id: person1Id },
+          { pendingRequests: pendingRequests }
+        );
+      }
+      const updateduser = await User.findById(req.auth._id);
+      updateduser.password = undefined;
+      updateduser.secret = undefined;
+      updateduser.createdAt = undefined;
+      updateduser.question = undefined;
+      updateduser.updatedAt = undefined;
+      updateduser.followers = undefined;
+      updateduser.following = undefined;
+      return res.send(updateduser);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const findRequest = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    let pending = user.followers;
+    console.log(pending);
+    if (pending) {
+      const people = await User.find({ _id: pending }).limit(10);
+      console.log(people);
+      if (people.length > 0) {
+        for (let i = 0; i < people.length; i++) {
+          people[i].email = undefined;
+          people[i].password = undefined;
+          people[i].question = undefined;
+          people[i].userName = undefined;
+          people[i].secret = undefined;
+          people[i].following = undefined;
+          people[i].followers = undefined;
+          people[i].pendingRequests = undefined;
+          people[i].createdAt = undefined;
+          people[i].updatedAt = undefined;
+          people[i].__v = undefined;
+          people[i].createdAt = undefined;
+        }
+      }
+      console.log(people);
+      return res.json(people);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+
+const acceptRequest = async (req, res) => {
+  try {
+    const person1Id = req.auth._id; //currently logged in user
+    const person2Id = req.body._id; // User whose request will be accepted
+    console.log(person1Id, " ", person2Id);
+    const person1 = await User.findById(person1Id);
+    const person2 = await User.findById(person2Id);
+    const followers = person1.followers;
+    const person1Following = person1.following;
+    const person2Following = person2.following;
+    console.log(followers);
+    const pendingRequests = person2.pendingRequests;
+    for (let i = 0; i < pendingRequests.length; i++) {
+      if (pendingRequests[i] == person1Id) {
+        pendingRequests.splice(i, 1);
+        break;
+      }
+    }
+    const ok1 = await User.updateOne(
+      { _id: person2Id },
+      {
+        $set: {
+          pendingRequests: pendingRequests,
+        },
+      }
+    );
+    let person2Friends = [];
+    if (!person2Following) {
+      person2Friends[0] = person1Id;
+      const ok2 = await User.updateOne(
+        { _id: person2Id },
+        {
+          $set: {
+            following: person2Friends,
+          },
+        }
+      );
+    }
+    if (person2Following) {
+      person2Following.push(person1Id);
+      const ok2 = await User.updateOne(
+        { _id: person2Id },
+        {
+          $set: {
+            following: person2Following,
+          },
+        }
+      );
+    }
+    if (!person1Following) {
+      let friends = [];
+      friends[0] = person2Id;
+      const ok2 = await User.updateOne(
+        { _id: person1Id },
+        {
+          $set: {
+            following: friends,
+          },
+        }
+      );
+    }
+    if (person1Following) {
+      person1Following.push(person2Id);
+      const ok2 = await User.updateOne(
+        { _id: person1Id },
+        {
+          $set: {
+            following: person1Following,
+          },
+        }
+      );
+    }
+    for (let i = 0; i < followers.length; i++) {
+      if ((followers[i] = person2Id)) {
+        followers.splice(i, 1);
+        break;
+      }
+    }
+    const ok4 = await User.updateOne(
+      { _id: person1Id },
+      {
+        $set: {
+          followers: followers,
+        },
+      }
+    );
+    const updateduser = await User.findById(req.auth._id);
+    updateduser.password = undefined;
+    updateduser.secret = undefined;
+    updateduser.createdAt = undefined;
+    updateduser.question = undefined;
+    updateduser.updatedAt = undefined;
+    updateduser.followers = undefined;
+    updateduser.following = undefined;
+    return res.send(updateduser);
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+
+const deleteRequest = async (req, res) => {
+  try {
+    const person1Id = req.auth._id; //currently logged in user
+    const person2Id = req.body._id; // User whose request will be accepted
+    console.log(person1Id, " ", person2Id);
+    const person1 = await User.findById(person1Id);
+    const person2 = await User.findById(person2Id);
+    const followers = person1.followers;
+    console.log(followers);
+    const pendingRequests = person2.pendingRequests;
+    for (let i = 0; i < pendingRequests.length; i++) {
+      if (pendingRequests[i] == person1Id) {
+        pendingRequests.splice(i, 1);
+        break;
+      }
+    }
+    const ok = await User.updateOne(
+      { _id: person2Id },
+      {
+        $set: {
+          pendingRequests: pendingRequests,
+        },
+      }
+    );
+    for (let i = 0; i < followers.length; i++) {
+      if (followers[i] == person2Id) {
+        followers.splice(i, 1);
+        break;
+      }
+    }
+    const ok2 = await User.updateOne(
+      { _id: person1Id },
+      {
+        $set: {
+          followers: followers,
+        },
+      }
+    );
+    const updateduser = await User.findById(req.auth._id);
+    updateduser.password = undefined;
+    updateduser.secret = undefined;
+    updateduser.createdAt = undefined;
+    updateduser.question = undefined;
+    updateduser.updatedAt = undefined;
+    updateduser.followers = undefined;
+    updateduser.following = undefined;
+    return res.send(updateduser);
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const findFollowing = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    const following = user.following;
+    if (following) {
+      const people = await User.find({ _id: following }).limit(3);
+      console.log(people);
+      if (people.length > 0) {
+        for (let i = 0; i < people.length; i++) {
+          people[i].email = undefined;
+          people[i].password = undefined;
+          people[i].question = undefined;
+          people[i].userName = undefined;
+          people[i].secret = undefined;
+          people[i].following = undefined;
+          people[i].followers = undefined;
+          people[i].pendingRequests = undefined;
+          people[i].createdAt = undefined;
+          people[i].updatedAt = undefined;
+          people[i].__v = undefined;
+          people[i].createdAt = undefined;
+        }
+      }
+      console.log(people);
+      return res.json(people);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const findFollowingAll = async (req, res) => {
+  try {
+    const user = await User.findById(req.auth._id);
+    const following = user.following;
+    if (following) {
+      const people = await User.find({ _id: following });
+      console.log(people);
+      if (people.length > 0) {
+        for (let i = 0; i < people.length; i++) {
+          people[i].email = undefined;
+          people[i].password = undefined;
+          people[i].question = undefined;
+          people[i].userName = undefined;
+          people[i].secret = undefined;
+          people[i].following = undefined;
+          people[i].followers = undefined;
+          people[i].pendingRequests = undefined;
+          people[i].createdAt = undefined;
+          people[i].updatedAt = undefined;
+          people[i].__v = undefined;
+          people[i].createdAt = undefined;
+        }
+      }
+      console.log(people);
+      return res.json(people);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+
+const unfollowPeople = async (req, res) => {
+  try {
+    const person1 = await User.findById(req.auth._id);
+    const person2 = await User.findById(req.body._id);
+    let person1Following = person1.following;
+    let person2Following = person2.following;
+    for (let i = 0; i < person1Following; i++) {
+      if (person1Following[i] == req.body._id) {
+        person1Following.splice(i, 1);
+      }
+    }
+    for (let i = 0; i < person2Following; i++) {
+      if (person2Following[i] == req.auth._id) {
+        person2Following.splice(i, 1);
+      }
+    }
+
+    const ok = await User.updateOne(
+      { _id: req.auth._id },
+      {
+        $set: {
+          following: person1Following,
+        },
+      }
+    );
+    const ok2 = await User.updateOne(
+      { _id: req.body._id },
+      {
+        $set: {
+          following: person2Following,
+        },
+      }
+    );
+    const updateduser = await User.findById(req.auth._id);
+    updateduser.password = undefined;
+    updateduser.secret = undefined;
+    updateduser.createdAt = undefined;
+    updateduser.question = undefined;
+    updateduser.updatedAt = undefined;
+    updateduser.followers = undefined;
+    updateduser.following = undefined;
+    return res.send(updateduser);
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
 module.exports = {
   register,
   login,
@@ -605,4 +1033,12 @@ module.exports = {
   updateProfile,
   findPeople,
   sentRequest,
+  findSentRequest,
+  cancelRequest,
+  findRequest,
+  acceptRequest,
+  deleteRequest,
+  findFollowing,
+  findFollowingAll,
+  unfollowPeople,
 };

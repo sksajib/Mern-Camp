@@ -214,7 +214,7 @@ const Home = () => {
                 value={value}
               />
               <pre>
-                <PostList posts={posts} />
+                <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
               </pre>
             </div>
 

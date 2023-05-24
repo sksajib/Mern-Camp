@@ -100,7 +100,9 @@ const Nav = () => {
                   href="/user/dashboard"
                   className={`nav-link text-dark  ${
                     isActive("/user/dashboard") ||
-                    isActive("/user/profile/update")
+                    isActive("/user/profile/update") ||
+                    isActive("/user/PeopleList/sentFriendRequest") ||
+                    isActive("/user/PeopleList/receivedFriendRequest")
                   }`}
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
@@ -124,6 +126,30 @@ const Nav = () => {
                       aria-expanded="false"
                     >
                       <h4>Profile</h4>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      role="button"
+                      className={`nav-link text-dark ${isActive(
+                        "/user/PeopleList/sentFriendRequest"
+                      )}`}
+                      href="/user/PeopleList/sentFriendRequest"
+                      aria-expanded="false"
+                    >
+                      <h4>Request Sent</h4>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      role="button"
+                      className={`nav-link text-dark ${isActive(
+                        "/user/PeopleList/receivedFriendRequest"
+                      )}`}
+                      href="/user/PeopleList/receivedFriendRequest"
+                      aria-expanded="false"
+                    >
+                      <h4>Friend Request</h4>
                     </a>
                   </li>
                   <li>

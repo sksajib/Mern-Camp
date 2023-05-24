@@ -9,6 +9,9 @@ const {
   clearImage,
   userPostUpdate,
   userPostDelete,
+  likePost,
+  addComment,
+  removeComment,
 } = require("../controllers/post");
 const { requireSignin, canEditDelete } = require("../Middlewares");
 const router = express.Router();
@@ -31,5 +34,7 @@ router.delete(
   canEditDelete,
   userPostDelete
 );
-
+router.post(`/like-post/:_id`, requireSignin, likePost);
+router.put("/add-comment", requireSignin, addComment);
+router.put("/remove-comment", requireSignin, removeComment);
 module.exports = router;
