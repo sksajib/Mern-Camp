@@ -7,6 +7,8 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/cards/PostList";
 import { Avatar } from "antd";
+import Friends from "./PeopleList/friends";
+
 const dashboard = () => {
   const [state, setState] = useContext(UserContext);
   const [image, setImage] = useState("");
@@ -163,7 +165,8 @@ const dashboard = () => {
   if (state && state.token) {
     return (
       <UserRoute>
-        <div className="container-fluid container text-dark">
+        <Friends />
+        <div className="container-fluid container text-dark overflow-hidden">
           <div className="row py-3 bg-default-img text-dark">
             <div className="d-inline col-md-11">
               <h2>Timeline</h2>
@@ -208,7 +211,7 @@ const dashboard = () => {
                 value={value}
               />
               <pre>
-                <PostList posts={posts} />
+                <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
               </pre>
             </div>
 

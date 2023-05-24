@@ -6,21 +6,22 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const People = ({ people }) => {
+const People = ({ people, setPeople }) => {
   const [state, setState] = useContext(UserContext);
   const id = state.user._id;
   let length;
+
   useEffect(() => {
     if (people.length > 0) length = people.length;
   }, [people, length]);
   const [add2, setAdd2] = useState(Array(length).fill(false));
 
   const router = useRouter();
-  const handleFollow = async (single, index) => {
+  const handleConfirm = async (single, index) => {
     console.log(index, "   ", single._id);
 
     try {
-      const { data } = await axios.put("/send-request", {
+      const { data } = await axios.put("/accept-request-people", {
         _id: single._id,
         id,
       });
@@ -42,7 +43,31 @@ const People = ({ people }) => {
       auth.user = data;
       console.log(auth);
       window.localStorage.setItem("auth", JSON.stringify(auth));
+      //setState({ ...state, user: data });
+    } catch (err) {
+      console.log(err);
+      toast.error(err);
+    }
+  };
+  const handleDelete = async (single, index) => {
+    console.log(index, "   ", single._id);
+
+    try {
+      const { data } = await axios.put("/delete-request-people", {
+        _id: single._id,
+        id,
+      });
+
+      console.log(data);
+      const auth = JSON.parse(window.localStorage.getItem("auth"));
+      console.log(auth.user);
+      auth.user = data;
+      console.log(auth);
+      window.localStorage.setItem("auth", JSON.stringify(auth));
       setState({ ...state, user: data });
+      let filtered = people.filter((p) => p._id !== single._id);
+      setPeople(filtered);
+      toast.warning("Friend Request Rejected");
     } catch (err) {
       console.log(err);
       toast.error(err);
@@ -54,33 +79,6 @@ const People = ({ people }) => {
         people.map((single, index) => (
           <div key={single._id} className="card mb-2" style={{ width: "100%" }}>
             <div className="card-header head align-item-center justify-content-between follow">
-              <label>
-                <div
-                  className="row d-flex follow"
-                  onClick={() => handleFollow(single, index)}
-                >
-                  <div className="col-2 text-primary">
-                    <PlusOutlined hidden={add2[index]} />
-                    <CheckOutlined hidden={!add2[index]} />
-                  </div>
-                  <div
-                    className="col-10 col-md-10 text-primary "
-                    style={{ fontSize: "20px" }}
-                    hidden={add2[index]}
-                  >
-                    Add Friend
-                  </div>
-                  <div
-                    className="col-10 col-md-10 text-primary "
-                    style={{ fontSize: "20px" }}
-                    hidden={!add2[index]}
-                  >
-                    Request Sent
-                  </div>
-                </div>
-              </label>
-            </div>
-            <div className="carb-body overflow-hidden">
               <div className="row d-flex bg-dark">
                 <div className="col-2 text-light">
                   {single.photo ? (
@@ -103,11 +101,40 @@ const People = ({ people }) => {
                 </div>
               </div>
             </div>
+            <div className="carb-body overflow-hidden">
+              <div className="row d-flex bg-dark" hidden={add2[index]}>
+                <div className="col-6 jusify-content-between text-light">
+                  <button
+                    className="btn btn-primary btn-lg text-light ms-4"
+                    onClick={() => handleConfirm(single, index)}
+                  >
+                    Confirm
+                  </button>
+                </div>
+                <div
+                  className="col-6 text-light jusify-content-between"
+                  style={{ fontSize: "25px" }}
+                >
+                  <button
+                    className="btn btn-danger btn-lg text-light"
+                    onClick={() => handleDelete(single, index)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <div
+                className="row d-flex bg-primary text-light"
+                hidden={!add2[index]}
+              >
+                <h3>Request Accepted</h3>
+              </div>
+            </div>
           </div>
         ))}
       {!people && (
         <div>
-          <h3 className="text-primary">People will appear here</h3>
+          <h3 className="text-primary">No Request Received</h3>
         </div>
       )}
     </pre>

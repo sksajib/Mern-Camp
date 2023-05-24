@@ -24,12 +24,46 @@ import {
 import { Avatar, Button } from "antd";
 import moment from "moment";
 
-const PostList = ({ posts }) => {
+const PostList = ({ posts, fetchUserPosts }) => {
   const [state, setState] = useContext(UserContext);
   const [isClicked, setClicked] = useState(false);
   const [ok, setOk] = useState(false);
   const [postid, setId] = useState("");
+  const [comment, setComment] = useState("");
+  const [visible, setVisible] = useState(false);
+  const [currentPost, setCurrentPost] = useState({});
 
+  let length;
+  useEffect(() => {
+    if (posts.length > 0) length = posts.length;
+    if (posts.length > 0) {
+      let like = 0;
+      for (let i = 0; i < length; i++) {
+        let numberOfLikes = posts[i].likes.length;
+        if (posts[i].likes) {
+          let like = 0;
+          for (let j = 0; j < numberOfLikes; j++) {
+            if (posts[i].likes[j] == state.user._id) {
+              setAddValue(i, true);
+              like = 1;
+            }
+          }
+          if (like == 0) {
+            setAddValue(i, false);
+          }
+        }
+      }
+    }
+  }, [posts, length]);
+  const [add2, setAdd2] = useState(Array(length).fill(false));
+
+  const setAddValue = (index, value) => {
+    setAdd2((prevAdd) => {
+      const updatedAdd = [...prevAdd];
+      updatedAdd[index] = value;
+      return updatedAdd;
+    });
+  };
   // const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const { confirm } = Modal;
@@ -49,7 +83,8 @@ const PostList = ({ posts }) => {
       const { data } = await axios.delete(`/delete-post/${id}`);
       setOk(false);
       toast.error("Post Deleted");
-      window.location.reload();
+      fetchUserPosts();
+      //window.location.reload();
     } catch (err) {
       setOk(false);
       console.log(err);
@@ -58,12 +93,58 @@ const PostList = ({ posts }) => {
   const onCancel = () => {
     setOk(false);
   };
-
+  const handleLike = async (_id, index) => {
+    try {
+      const { data } = await axios.post(`/like-post/${_id}`);
+      fetchUserPosts();
+    } catch (err) {
+      console.log(err);
+      toast.error(err);
+    }
+  };
+  const handleComment = (post, index) => {
+    setCurrentPost(post);
+    setId(post._id);
+    setVisible(true);
+  };
+  const addComment = async (e, post) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.put("/add-comment", {
+        postId: post._id,
+        comment,
+      });
+      console.log(data);
+      setComment("");
+      setVisible(false);
+      toast.success("Comment Added");
+      fetchUserPosts();
+    } catch (err) {
+      console.log(err);
+      toast.error(err);
+    }
+  };
+  const removeComment = async (e, post) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.put("/remove-comment", {
+        postId: post._id,
+        comment,
+      });
+      console.log(data);
+      setVisible(false);
+      toast.success("Comment Deleted");
+      fetchUserPosts();
+    } catch (err) {
+      console.log(err);
+      toast.error(err);
+    }
+  };
   return (
     <div>
       <pre>
         {posts &&
-          posts.map((post) => (
+          posts.map((post, index) => (
             <div
               key={post._id}
               className="card mt-2 mb-3"
@@ -96,7 +177,25 @@ const PostList = ({ posts }) => {
                             No
                           </button>
                         </Modal>
-
+                        <Modal
+                          open={postid === post._id && visible}
+                          onCancel={() => setVisible(false)}
+                          title="Comment"
+                          footer={null}
+                        >
+                          <form onSubmit={(e) => addComment(e, post)}>
+                            <input
+                              type="text"
+                              className="form-control"
+                              placeholder="Write Something.."
+                              value={comment}
+                              onChange={(e) => setComment(e.target.value)}
+                            />
+                            <button className="btn btn-primary btn-sm btn-block mt-3">
+                              Post
+                            </button>
+                          </form>
+                        </Modal>
                         {!post.postedBy.photo ? (
                           <Avatar size={50} className="mt-1">
                             {post.postedBy.name.charAt(0)}
@@ -213,39 +312,85 @@ const PostList = ({ posts }) => {
                       </div>
                     )}
                   </div>
-                  <div className="card-footer d-inline justify-content-between">
-                    <div className="margin d-inline">
-                      <HeartOutlined className="size2 text-danger " />
+                  <div className="card-footer d-flex justify-content-evenly">
+                    <div>
+                      <label>
+                        <HeartOutlined
+                          className="size2 text-danger "
+                          hidden={add2[index]}
+                        />
+                        <HeartFilled
+                          className="size2 text-danger "
+                          hidden={!add2[index]}
+                        />
+                        <button
+                          onClick={() => handleLike(post._id, index)}
+                          hidden
+                        />
+                      </label>
+                      <label className="ms-3">
+                        <h4>{post.likes.length} likes</h4>
+                      </label>
                     </div>
-                    <div className=" margin d-inline ">
-                      <CommentOutlined className="size2 " />
+
+                    <div>
+                      <label>
+                        <CommentOutlined className="size2 " />
+                        <button
+                          onClick={() => handleComment(post, index)}
+                          hidden
+                        />
+                      </label>
+                      <label className="ms-3">
+                        <h4>{post.comments.length} Comments</h4>
+                      </label>
                     </div>
-                    <div className=" d-inline ">
-                      <ShareAltOutlined className="size2 margin" />
+                    <div>
+                      <ShareAltOutlined className="size2 " />
                     </div>
                   </div>
+                  {post.comments && post.comments.length > 0 && (
+                    <ol className="list-group">
+                      {post.comments.map(
+                        (comment, index) =>
+                          index >= post.comments.length - 2 && (
+                            <div key={comment._id}>
+                              <li className="list-group-item d-flex justify-content-between align-items-start">
+                                <div className="ms-2 me-auto">
+                                  {" "}
+                                  <div>
+                                    {!comment.postedBy.photo ? (
+                                      <Avatar size={50} className="mt-1">
+                                        {comment.postedBy.name.charAt(0)}
+                                      </Avatar>
+                                    ) : (
+                                      <Avatar
+                                        src={comment.postedBy.photo}
+                                        size={50}
+                                        className="mt-1"
+                                      />
+                                    )}
+                                    {comment.postedBy.name}
+                                  </div>
+                                  <div className="mt-2 ms-3">
+                                    {comment.text}
+                                  </div>
+                                </div>
+                                <span className="badge rounded-pill text-muted">
+                                  {moment(comment.created).fromNow()}
+                                </span>
+                              </li>
+                            </div>
+                          )
+                      )}
+                    </ol>
+                  )}
                 </div>
               )}
             </div>
           ))}
-        {/* {posts && JSON.stringify(posts, null, 4)} */}
       </pre>
       <pre>{!posts && "Your Posts will appear here"}</pre>
-      {/* <div className="row">
-            <div className="col">
-              <Modal
-                title="Delete Post"
-                open={ok}
-                onCancel={() => setOk(false)}
-                footer={null}
-              >
-                <p>Are you Sure to delete this post?</p>
-                <Link href="/login" className="btn btn-primary btn-sm">
-                  Login
-                </Link>
-              </Modal>
-            </div>
-          </div> */}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import { Avatar } from "antd";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
@@ -13,14 +13,16 @@ const People = ({ people }) => {
   useEffect(() => {
     if (people.length > 0) length = people.length;
   }, [people, length]);
-  const [add2, setAdd2] = useState(Array(length).fill(false));
+
+  console.log(people.length);
+  const [add2, setAdd2] = useState(Array(length).fill(true));
 
   const router = useRouter();
   const handleFollow = async (single, index) => {
     console.log(index, "   ", single._id);
 
     try {
-      const { data } = await axios.put("/send-request", {
+      const { data } = await axios.put("/send-request-people", {
         _id: single._id,
         id,
       });
@@ -107,7 +109,7 @@ const People = ({ people }) => {
         ))}
       {!people && (
         <div>
-          <h3 className="text-primary">People will appear here</h3>
+          <h3 className="text-primary">No Request Sent</h3>
         </div>
       )}
     </pre>
