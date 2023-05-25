@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  sendOtp,
   register,
   login,
   currentUser,
@@ -17,9 +18,12 @@ const {
   findFollowing,
   findFollowingAll,
   unfollowPeople,
+  searchUser,
+  fetchPrivateProfile,
 } = require("../controllers/auth");
 const { requireSignin, canUpdateProfile } = require("../Middlewares");
 const router = express.Router();
+router.post("/send-otp", sendOtp);
 router.post("/register", register);
 router.post("/login", login);
 router.get("/current-user", requireSignin, currentUser);
@@ -52,4 +56,6 @@ router.put(
 router.get("/find-following", requireSignin, findFollowing);
 router.get("/find-following-all", requireSignin, findFollowingAll);
 router.put("/unfollow-people", requireSignin, canUpdateProfile, unfollowPeople);
+router.get("/search-user/:query", searchUser);
+router.get("/fetch-private-profile/:_id", requireSignin, fetchPrivateProfile);
 module.exports = router;

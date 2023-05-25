@@ -6,17 +6,19 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const People = ({ people }) => {
+const People = ({ people, total }) => {
   const [state, setState] = useContext(UserContext);
   const id = state.user._id;
-  let length;
+  const length2 = state.user.pendingRequests.length;
+  const [length, setLength] = useState(people.length);
   useEffect(() => {
-    if (people.length > 0) length = people.length;
-  }, [people, length]);
+    if (people.length > 0) {
+      setLength(people.length);
+    }
+  }, [people, setLength]);
 
-  console.log(people.length);
-  const [add2, setAdd2] = useState(Array(length).fill(true));
-
+  const [add2, setAdd2] = useState(Array(length2).fill(true));
+  console.log(add2, "", length);
   const router = useRouter();
   const handleFollow = async (single, index) => {
     console.log(index, "   ", single._id);
@@ -38,11 +40,11 @@ const People = ({ people }) => {
       } else {
         setAddValue(index, false);
       }
-      console.log(data);
+      //console.log(data);
       const auth = JSON.parse(window.localStorage.getItem("auth"));
-      console.log(auth.user);
+      //console.log(auth.user);
       auth.user = data;
-      console.log(auth);
+      // console.log(auth);
       window.localStorage.setItem("auth", JSON.stringify(auth));
       setState({ ...state, user: data });
     } catch (err) {

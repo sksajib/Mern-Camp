@@ -40,17 +40,12 @@ function Login() {
   //   }
   // }, []);
   useEffect(() => {
-    console.log(state);
     state && state.token && router.push("/user/dashboard");
   }, [state]);
   useEffect(() => {
     setState(JSON.parse(window.localStorage.getItem("auth")));
   }, []);
   useEffect(() => {
-    //console.log("Current =>", router.pathname);
-    //console.log(state);
-    //setCurrent(state);
-    // console.log(current);
     const event = new Event("stateUpdate");
     window.dispatchEvent(event);
   }, []);

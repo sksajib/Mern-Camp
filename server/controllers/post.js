@@ -36,8 +36,11 @@ const createPost = async (req, res) => {
           image: "",
           postedBy: req.auth._id,
         });
-        post.save();
-        return res.json(post);
+        await post.save();
+        const postWithUser = await Post.findById(post._id)
+          .populate("postedBy", "_id name photo")
+          .populate("comments.postedBy", "_id name photo");
+        return res.json(postWithUser);
       }
       if (
         !(content && contentClear !== " " && contentClear !== "") &&
@@ -48,8 +51,11 @@ const createPost = async (req, res) => {
           image: image.url,
           postedBy: req.auth._id,
         });
-        post.save();
-        return res.json(post);
+        await post.save();
+        const postWithUser = await Post.findById(post._id)
+          .populate("postedBy", "_id name photo")
+          .populate("comments.postedBy", "_id name photo");
+        return res.json(postWithUser);
       }
       if (content && contentClear !== " " && contentClear !== "" && image.url) {
         const post = new Post({
@@ -58,7 +64,10 @@ const createPost = async (req, res) => {
           postedBy: req.auth._id,
         });
         await post.save();
-        return res.json(post);
+        const postWithUser = await Post.findById(post._id)
+          .populate("postedBy", "_id name photo")
+          .populate("comments.postedBy", "_id name photo");
+        return res.json(postWithUser);
       }
     }
   } catch (err) {
@@ -92,25 +101,26 @@ const postByUser = async (req, res) => {
 
     let user = await User.findById(req.auth._id);
     let following = user.following;
-
+    const currentPage = req.params.page || 1;
+    const perPage = 2;
     if (following) {
       following.push(user._id);
       const posts = await Post.find({ postedBy: { $in: following } })
-
+        .skip((currentPage - 1) * perPage)
         .populate("postedBy", "_id name photo")
         .populate("comments.postedBy", "_id name photo")
         .sort({ createdAt: -1 })
-        .limit(10);
+        .limit(perPage);
 
       return res.json(posts);
     }
 
     if (!following) {
       const posts = await Post.find({ postedBy: req.auth._id })
-
+        .skip((currentPage - 1) * perPage)
         .populate("postedBy", "_id name photo")
         .sort({ createdAt: -1 })
-        .limit(10);
+        .limit(perPage);
 
       return res.json(posts);
     }
@@ -120,14 +130,16 @@ const postByUser = async (req, res) => {
 };
 const postByLoggedInUser = async (req, res) => {
   try {
+    const currentPage = req.params.page || 1;
+    const perPage = 2;
     //returning posts only by the logged in user
     //const posts = await Post.find() //returning all posts
     const posts = await Post.find({ postedBy: req.auth._id })
-
+      .skip((currentPage - 1) * perPage)
       .populate("postedBy", "_id name photo")
       .populate("comments.postedBy", "_id name photo")
       .sort({ createdAt: -1 })
-      .limit(10);
+      .limit(perPage);
 
     return res.json(posts);
   } catch (err) {
@@ -138,7 +150,9 @@ const postByLoggedInUser = async (req, res) => {
 const userPost = async (req, res) => {
   try {
     //console.log(req);
-    const post = await Post.findById(req.params._id);
+    const post = await Post.findById(req.params._id)
+      .populate("postedBy", "_id name photo")
+      .populate("comments.postedBy", "_id name photo");
     return res.json(post);
   } catch (err) {
     //console.log(err);
@@ -289,12 +303,16 @@ const removeComment = async (req, res) => {
   try {
     const { postId, comment } = req.body;
     const post = await Post.findById(postId);
+    console.log(postId);
     const comments = post.comments;
-    const comment2 = comments.filter((c) => c._id === comment._id);
+    const comment2 = comments.filter((c) => c._id == comment._id);
+    console.log(comment2);
     const person1Id = req.auth._id;
-    const person2id = comment2.postedBy;
+    const person2id = comment2[0].postedBy;
     const person3Id = post.postedBy;
+    console.log(person1Id, " ", person2id, " ", person3Id);
     if (person3Id == person1Id || person2id == person1Id) {
+      console.log("ok");
       const result = await Post.findByIdAndUpdate(
         postId,
         {
@@ -308,6 +326,78 @@ const removeComment = async (req, res) => {
     return res.status(400).send("You can't delete the comment");
   } catch (err) {}
 };
+const totalPostsHome = async (req, res) => {
+  try {
+    //const posts = await Post.find({ postedBy: req.auth._id })//returning posts only by the logged in user
+
+    let user = await User.findById(req.auth._id);
+    let following = user.following;
+
+    if (following) {
+      following.push(user._id);
+      const posts = await Post.find({
+        postedBy: { $in: following },
+      });
+      //console.log(posts.length);
+      return res.json(posts.length);
+    }
+    if (!following) {
+      const posts = await Post.find({
+        postedBy: req.auth._id,
+      });
+      return res.json(posts.length);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+const totalPostsDashboard = async (req, res) => {
+  try {
+    //returning posts only by the logged in user
+    //const posts = await Post.find() //returning all posts
+    const posts = await Post.find({
+      postedBy: req.auth._id,
+    });
+
+    return res.json(posts.length);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const fetchFriendPosts = async (req, res) => {
+  try {
+    const { id } = req.body.id;
+    console.log(req.body.id);
+    const currentPage = req.params.page || 1;
+    const perPage = 5;
+    //returning posts only by the logged in user
+    //const posts = await Post.find() //returning all posts
+    const posts = await Post.find({ postedBy: req.body.id })
+      .skip((currentPage - 1) * perPage)
+      .populate("postedBy", "_id name photo")
+      .populate("comments.postedBy", "_id name photo")
+      .sort({ createdAt: -1 })
+      .limit(perPage);
+    console.log(posts);
+    return res.json(posts);
+  } catch (err) {
+    console.log(err);
+  }
+};
+const totalPostsFriend = async (req, res) => {
+  try {
+    //returning posts only by the logged in user
+    //const posts = await Post.find() //returning all posts
+    const posts = await Post.find({
+      postedBy: req.body.id,
+    });
+
+    return res.json(posts.length);
+  } catch (err) {
+    console.log(err);
+  }
+};
 module.exports = {
   createPost,
   uploadImage,
@@ -320,4 +410,8 @@ module.exports = {
   likePost,
   addComment,
   removeComment,
+  totalPostsHome,
+  totalPostsDashboard,
+  totalPostsFriend,
+  fetchFriendPosts,
 };

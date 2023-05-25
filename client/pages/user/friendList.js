@@ -25,7 +25,7 @@ const Friends = () => {
       toast.error(err);
     }
   };
-  console.log(people);
+
   const viewProfileHandler = async (person) => {
     router.push(`/user/profile/${person._id}`);
   };
@@ -36,11 +36,10 @@ const Friends = () => {
         id,
       });
 
-      console.log(data);
       const auth = JSON.parse(window.localStorage.getItem("auth"));
-      console.log(auth.user);
+
       auth.user = data;
-      console.log(auth);
+
       window.localStorage.setItem("auth", JSON.stringify(auth));
       setState({ ...state, user: data });
       let filtered = people.filter((p) => p._id !== person._id);

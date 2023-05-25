@@ -8,12 +8,22 @@ import { toast } from "react-toastify";
 import PostList from "../../components/cards/PostList";
 import { Avatar } from "antd";
 import Friends from "./PeopleList/friends";
+import { Pagination } from "antd";
+import io from "socket.io-client";
 
 const dashboard = () => {
   const [state, setState] = useContext(UserContext);
   const [image, setImage] = useState("");
   const [dp, setDp] = useState({});
   const [value, setValue] = useState("");
+  const [totalPostsDashboard, setTotalPostsDashboard] = useState(0);
+  const socket = io(
+    process.env.NEXT_PUBLIC_SOCKETIO,
+    { path: "/socket.io" },
+    {
+      reconnection: true,
+    }
+  );
   let url = "";
   if (!dp.url && state !== null) {
     dp.url = state.user.photo;
@@ -23,6 +33,7 @@ const dashboard = () => {
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useState("");
+  const [page, setPage] = useState(1);
   // const [people, setPeople] = useState("");
   // console.log(state.user.photo);
   let name = "";
@@ -38,19 +49,26 @@ const dashboard = () => {
       fetchUserPosts();
       // findPeople();
     }
+  }, [state && state.token, page]);
+  useEffect(() => {
+    try {
+      state &&
+        state.token &&
+        axios
+          .get("/total-posts-dashboard")
+          .then(({ data }) => setTotalPostsDashboard(data));
+    } catch (err) {
+      console.log(err);
+    }
   }, [state && state.token]);
   const [content, setContent] = useState("");
-  console.log(content);
-  let quillObj;
-  //const [quillObj, setQuillObj] = useState();
 
   const fetchUserPosts = async () => {
     try {
-      const { data } = await axios.get("/user-posts-loggedin");
+      const { data } = await axios.get(`/user-posts-loggedin/${page}`);
       if (data.length > 0) {
         setPosts(data);
       }
-      //console.log("User Posts =>", data.length);
     } catch (err) {}
   };
   // const findPeople = async () => {
@@ -74,13 +92,16 @@ const dashboard = () => {
         toast.error(data.error);
       }
       console.log("Create Post Response =>", data);
-      window.location.reload();
+
       // console.log("Create Post Response =>", content);
       toast.success("Post Created");
       setImage({});
       setContent("");
       setLoading(false);
       fetchUserPosts();
+      setPage(1);
+      socket.emit("userId", state.user._id);
+      socket.emit("newPost", data);
     } catch (err) {
       setLoading(false);
       console.log(err);
@@ -213,6 +234,12 @@ const dashboard = () => {
               <pre>
                 <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
               </pre>
+              <Pagination
+                showQuickJumper
+                defaultCurrent={page}
+                total={(totalPostsDashboard / 2) * 10}
+                onChange={(value) => setPage(value)}
+              />
             </div>
 
             {/* <div className="col-md-2">

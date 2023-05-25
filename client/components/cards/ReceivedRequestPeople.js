@@ -6,14 +6,11 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const People = ({ people, setPeople }) => {
+const People = ({ people, setPeople, total }) => {
   const [state, setState] = useContext(UserContext);
   const id = state.user._id;
-  let length;
+  const length = state.user.followers.length;
 
-  useEffect(() => {
-    if (people.length > 0) length = people.length;
-  }, [people, length]);
   const [add2, setAdd2] = useState(Array(length).fill(false));
 
   const router = useRouter();

@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 const sentFriendRequest = () => {
   const [state, setState] = useContext(UserContext);
   const [people, setPeople] = useState("");
+  const [total, setTotal] = useState(0);
   const router = useRouter();
   useEffect(() => {
     state && state.token && findPeople();
@@ -19,6 +20,7 @@ const sentFriendRequest = () => {
       const { data } = await axios.get("/find-Sent-Request");
       if (data.length > 0) {
         setPeople(data);
+        setTotal(data.length);
       }
       console.log(data);
     } catch (err) {
@@ -33,7 +35,7 @@ const sentFriendRequest = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-3 mb-3">
-              <People people={people} />
+              <People people={people} total={total} />
             </div>
           </div>
         </div>

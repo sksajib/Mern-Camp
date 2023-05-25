@@ -8,6 +8,8 @@ import "../public/css/style.css";
 import { UserProvider } from "../context";
 import UserRoute from "../components/routes/UserRoute";
 
+import { useEffect } from "react";
+
 function MyApp({ Component, pageProps }) {
   return (
     <UserProvider>
