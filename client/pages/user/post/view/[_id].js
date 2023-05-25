@@ -1,12 +1,11 @@
-import parse from "html-react-parser";
-import { useState, useContext, useEffect, useRef } from "react";
-import { UserContext } from "../../context";
-import Router from "next/router";
 import { useRouter } from "next/router";
-import { Modal } from "antd";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
+import parse from "html-react-parser";
+import { UserContext } from "../../../../context";
+import { Avatar } from "antd";
 import { toast } from "react-toastify";
-import ConfirmationDialog from "./DeleteModal";
+import { Modal } from "antd";
 import {
   LikeOutlined,
   HeartOutlined,
@@ -21,61 +20,56 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button } from "antd";
-import moment from "moment";
 
-const PostList = ({ posts, fetchUserPosts }) => {
+import moment from "moment";
+import UserRoute from "../../../../components/routes/UserRoute";
+
+const viewPost = () => {
   const [state, setState] = useContext(UserContext);
-  const [isClicked, setClicked] = useState(false);
+  const router = useRouter();
+  const _id = router.query._id;
+  const [post, setPost] = useState({});
+  const [content, setContent] = useState("");
+  const [image, setImage] = useState("");
+  const [value, setValue] = useState("");
+  const [comments, setComments] = useState([{}]);
+  const [likes, setLikes] = useState([]);
+  const [like, setLike] = useState(false);
   const [ok, setOk] = useState(false);
   const [postid, setId] = useState("");
-  const [comment, setComment] = useState("");
   const [visible, setVisible] = useState(false);
-  const [currentPost, setCurrentPost] = useState({});
+  const [comment, setComment] = useState("");
+  const [isClicked, setClicked] = useState(false);
 
-  let length;
   useEffect(() => {
-    if (posts.length > 0) length = posts.length;
-    if (posts.length > 0) {
-      let like = 0;
-      for (let i = 0; i < length; i++) {
-        let numberOfLikes = posts[i].likes.length;
-        if (posts[i].likes) {
-          let like = 0;
-          for (let j = 0; j < numberOfLikes; j++) {
-            if (posts[i].likes[j] == state.user._id) {
-              setAddValue(i, true);
-              like = 1;
-              break;
-            }
-          }
-          if (like == 0) {
-            setAddValue(i, false);
+    if (_id) fetchPost();
+  }, [_id]);
+  const fetchPost = async () => {
+    try {
+      const { data } = await axios.get(`/user-post/${_id}`);
+      setPost(data);
+      console.log(data);
+      data.image && setImage(data.image);
+      data.content && setContent(data.content);
+      data.comments && setComments(data.comments);
+      data.likes && setLikes(data.likes);
+      data._id && setId(data._id);
+      if (data.likes.length > 0) {
+        for (let i = 0; i < data.likes.length; i++) {
+          if (data.likes[i] == state.user._id) {
+            setLike(true);
+            break;
+          } else {
+            setLike(false);
           }
         }
-      }
+      } else setLike(false);
+    } catch (err) {
+      console.log(err);
     }
-  }, [posts, length]);
-  const [add2, setAdd2] = useState(Array(length).fill(false));
-
-  const setAddValue = (index, value) => {
-    setAdd2((prevAdd) => {
-      const updatedAdd = [...prevAdd];
-      updatedAdd[index] = value;
-      return updatedAdd;
-    });
   };
-  // const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
-  const { confirm } = Modal;
   const handleMenu = () => {
     setClicked(!isClicked);
-  };
-  const handleDelete = async (id) => {
-    setId(id);
-    console.log(id);
-
-    setOk(true);
   };
   const onConfirm = async (id) => {
     try {
@@ -84,7 +78,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
       const { data } = await axios.delete(`/delete-post/${id}`);
       setOk(false);
       toast.error("Post Deleted");
-      fetchUserPosts();
+      router.push("/user/dashboard");
       //window.location.reload();
     } catch (err) {
       setOk(false);
@@ -94,17 +88,16 @@ const PostList = ({ posts, fetchUserPosts }) => {
   const onCancel = () => {
     setOk(false);
   };
-  const handleLike = async (_id, index) => {
+  const handleLike = async (_id) => {
     try {
       const { data } = await axios.post(`/like-post/${_id}`);
-      fetchUserPosts();
+      fetchPost();
     } catch (err) {
       console.log(err);
       toast.error(err);
     }
   };
   const handleComment = (post, index) => {
-    setCurrentPost(post);
     setId(post._id);
     setVisible(true);
   };
@@ -119,13 +112,13 @@ const PostList = ({ posts, fetchUserPosts }) => {
       setComment("");
       setVisible(false);
       toast.success("Comment Added");
-      fetchUserPosts();
+      fetchPost();
     } catch (err) {
       console.log(err);
       toast.error(err);
     }
   };
-  const removeComment = async (e, post, comment) => {
+  const removeComment = async (e, comment) => {
     e.preventDefault();
     try {
       const { data } = await axios.put("/remove-comment", {
@@ -135,26 +128,18 @@ const PostList = ({ posts, fetchUserPosts }) => {
       console.log(data);
       setVisible(false);
       toast.success("Comment Deleted");
-      fetchUserPosts();
+      fetchPost();
     } catch (err) {
       console.log(err);
       toast.error(err);
     }
   };
-  const viewPost = (post) => {
-    router.push(`/user/post/view/${post._id}`);
-  };
-  return (
-    <div>
-      <pre>
-        {posts &&
-          posts.map((post, index) => (
-            <div
-              key={post._id}
-              className="card mt-2 mb-3"
-              style={{ overflow: "hidden" }}
-            >
-              {/* {(id = post._id)} */}
+  if (state && state.token) {
+    return (
+      <UserRoute>
+        <div className="container container-fluid">
+          {post && (
+            <div className="card " style={{ overflow: "hidden" }}>
               {post.postedBy && (
                 <div>
                   <div className="card-header">
@@ -286,7 +271,6 @@ const PostList = ({ posts, fetchUserPosts }) => {
                       </div>
                     </div>
                   </div>
-
                   <div className="card-body">
                     {post.postedBy && (
                       <div>
@@ -321,16 +305,13 @@ const PostList = ({ posts, fetchUserPosts }) => {
                       <label>
                         <HeartOutlined
                           className="size2 text-danger "
-                          hidden={add2[index]}
+                          hidden={like}
                         />
                         <HeartFilled
                           className="size2 text-danger "
-                          hidden={!add2[index]}
+                          hidden={!like}
                         />
-                        <button
-                          onClick={() => handleLike(post._id, index)}
-                          hidden
-                        />
+                        <button onClick={() => handleLike(post._id)} hidden />
                       </label>
                       <label className="ms-3">
                         <h4>{post.likes.length} likes</h4>
@@ -340,10 +321,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                     <div>
                       <label>
                         <CommentOutlined className="size2 " />
-                        <button
-                          onClick={() => handleComment(post, index)}
-                          hidden
-                        />
+                        <button onClick={() => handleComment(post)} hidden />
                       </label>
                       <label className="ms-3">
                         <h4>{post.comments.length} Comments</h4>
@@ -354,20 +332,20 @@ const PostList = ({ posts, fetchUserPosts }) => {
                     </div>
                   </div>
                   <div className="row ">
-                    <div className="col-3 col-md-1 ">
+                    <div className="col-2 col-md-1 ">
                       {!state.user.photo ? (
-                        <Avatar size={55} className="mt-1">
+                        <Avatar size={70} className="mt-1">
                           {state.user.name.charAt(0)}
                         </Avatar>
                       ) : (
                         <Avatar
                           src={state.user.photo}
-                          size={55}
+                          size={70}
                           className="mt-1 ms-2"
                         />
                       )}
                     </div>
-                    <div className="col-9 col-md-11">
+                    <div className="col-10 col-md-11">
                       <form onSubmit={(e) => addComment(e, post)}>
                         <div className="row">
                           <div className="col-9 mt-3">
@@ -391,66 +369,53 @@ const PostList = ({ posts, fetchUserPosts }) => {
 
                   {post.comments && post.comments.length > 0 && (
                     <ol className="list-group">
-                      {post.comments.map(
-                        (comment, index) =>
-                          index >= post.comments.length - 2 && (
-                            <div key={comment._id}>
-                              <li className="list-group-item d-flex justify-content-between align-items-start">
-                                <div className="ms-2 me-auto">
-                                  {" "}
-                                  <div>
-                                    {!comment.postedBy.photo ? (
-                                      <Avatar size={50} className="mt-1">
-                                        {comment.postedBy.name.charAt(0)}
-                                      </Avatar>
-                                    ) : (
-                                      <Avatar
-                                        src={comment.postedBy.photo}
-                                        size={50}
-                                        className="mt-1"
-                                      />
-                                    )}
-                                    {comment.postedBy.name}
-                                  </div>
-                                  <div className="mt-2 ms-3">
-                                    {comment.text}
-                                  </div>
-                                </div>
-                                <span className="badge rounded-pill text-muted">
-                                  {moment(comment.created).fromNow()}
-                                  {state &&
-                                    state.user &&
-                                    (comment.postedBy._id == state.user._id ||
-                                      post.postedBy._id == state.user._id) && (
-                                      <div className="ml-auto mt-1">
-                                        <DeleteOutlined
-                                          className="ps-2 text-danger size2"
-                                          onClick={(e) =>
-                                            removeComment(e, post, comment)
-                                          }
-                                        />
-                                      </div>
-                                    )}
-                                </span>
-                              </li>
+                      {post.comments.map((comment) => (
+                        <div key={comment._id}>
+                          <li className="list-group-item d-flex justify-content-between align-items-start">
+                            <div className="ms-2 me-auto">
+                              {" "}
+                              <div>
+                                {!comment.postedBy.photo ? (
+                                  <Avatar size={50} className="mt-1">
+                                    {comment.postedBy.name.charAt(0)}
+                                  </Avatar>
+                                ) : (
+                                  <Avatar
+                                    src={comment.postedBy.photo}
+                                    size={50}
+                                    className="mt-1"
+                                  />
+                                )}
+                                {comment.postedBy.name}
+                              </div>
+                              <div className="mt-2 ms-3">{comment.text}</div>
                             </div>
-                          )
-                      )}
+                            <span className="badge rounded-pill text-muted">
+                              {moment(comment.created).fromNow()}
+                              {state &&
+                                state.user &&
+                                (comment.postedBy._id == state.user._id ||
+                                  post.postedBy._id == state.user._id) && (
+                                  <div className="ml-auto mt-1">
+                                    <DeleteOutlined
+                                      className="ps-2 text-danger size2"
+                                      onClick={(e) => removeComment(e, comment)}
+                                    />
+                                  </div>
+                                )}
+                            </span>
+                          </li>
+                        </div>
+                      ))}
                     </ol>
                   )}
-                  <div
-                    onClick={() => viewPost(post)}
-                    className="d-flex justify-content-center text-primary dp"
-                  >
-                    <h3> View All Comments</h3>
-                  </div>
                 </div>
               )}
             </div>
-          ))}
-      </pre>
-      <pre>{!posts && "Your Posts will appear here"}</pre>
-    </div>
-  );
+          )}
+        </div>
+      </UserRoute>
+    );
+  }
 };
-export default PostList;
+export default viewPost;

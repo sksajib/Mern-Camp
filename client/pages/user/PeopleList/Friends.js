@@ -10,7 +10,6 @@ const Friends = () => {
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
   const id = state.user._id;
-  console.log(id);
   const [people, setPeople] = useState("");
   useEffect(() => {
     state && state.token && findPeople();
@@ -26,7 +25,6 @@ const Friends = () => {
       toast.error(err);
     }
   };
-  console.log(people);
 
   if (state && state.token)
     return (

@@ -6,19 +6,16 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-const People = ({ people }) => {
+const People = ({ people, total }) => {
   const [state, setState] = useContext(UserContext);
   const id = state.user._id;
   let length;
-  useEffect(() => {
-    if (people.length > 0) length = people.length;
-  }, [people, length]);
-  const [add2, setAdd2] = useState(Array(length).fill(false));
+  const [add2, setAdd2] = useState(Array(10).fill(false));
 
   const router = useRouter();
   const handleFollow = async (single, index) => {
     console.log(index, "   ", single._id);
-
+    console.log(length);
     try {
       const { data } = await axios.put("/send-request", {
         _id: single._id,
@@ -107,7 +104,7 @@ const People = ({ people }) => {
         ))}
       {!people && (
         <div>
-          <h3 className="text-primary">People will appear here</h3>
+          <h5 className="text-primary">People will appear here</h5>
         </div>
       )}
     </pre>

@@ -11,6 +11,7 @@ const receivedFriendRequest = () => {
   const [state, setState] = useContext(UserContext);
   const [people, setPeople] = useState("");
   const router = useRouter();
+  const [total, setTotal] = useState(0);
   useEffect(() => {
     state && state.token && findPeople();
   }, [state && state.token]);
@@ -19,6 +20,7 @@ const receivedFriendRequest = () => {
       const { data } = await axios.get("/find-Received-Request");
       if (data.length > 0) {
         setPeople(data);
+        setTotal(data.length);
       }
       console.log(data);
     } catch (err) {
@@ -33,7 +35,7 @@ const receivedFriendRequest = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-3 mb-3">
-              <People people={people} setPeople={setPeople} />
+              <People people={people} setPeople={setPeople} total={total} />
             </div>
           </div>
         </div>

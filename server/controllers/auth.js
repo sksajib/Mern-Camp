@@ -4,8 +4,10 @@ const { Schema } = mongoose;
 const { nanoid } = require("nanoid");
 const jwt = require("jsonwebtoken");
 const { hashPassword, comparePassword } = require("../helpers/auth");
+const nodemailer = require("nodemailer");
+const OtpStore = require("../Models/otpstore");
 // const nanoid = require("nanoid");
-const register = async (req, res) => {
+const sendOtp = async (req, res) => {
   // console.log("Register endpoint=>", req.body);
 
   let { name, email, password, confirmPassword, question, secret, photo } =
@@ -47,6 +49,106 @@ const register = async (req, res) => {
   const secretUpper = secretC.toUpperCase();
   const exist = await User.findOne({ email: emailUpper });
   if (exist) return res.status(400).send("Email is taken");
+  function generateOTP() {
+    const digits = "0123456789";
+    let OTP = "";
+    for (let i = 0; i < 6; i++) {
+      OTP += digits[Math.floor(Math.random() * 10)];
+    }
+    return OTP;
+  }
+  const otp = generateOTP();
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: "sajibsaha859@gmail.com",
+      pass: "qcpokhwacdqpisek",
+    },
+  });
+
+  const mailOptions = {
+    from: "sajibsaha859@gmail.com",
+    to: emailUpper,
+    subject: "Email Verification",
+    text: `Please Enter The OTP: ${otp} `,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+      return res.status(400).send(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
+  const OTP = await OtpStore.findOne({ email: emailUpper });
+  if (OTP) {
+    const OtpId = OTP._id;
+    const ok = await OtpStore.findByIdAndDelete(OtpId);
+  }
+  const otpStorage = new OtpStore({
+    email: emailUpper,
+    otp: otp,
+  });
+  try {
+    await otpStorage.save();
+    return res.send({ ok: true });
+  } catch (err) {
+    return res.send(err);
+  }
+};
+const register = async (req, res) => {
+  // console.log("Register endpoint=>", req.body);
+
+  let { name, email, password, confirmPassword, question, secret, photo, otp } =
+    req.body;
+  const nameC = name.replaceAll(/\s+/g, " ");
+  const secretC = secret.replaceAll(/\s+/g, " ");
+  //const passC = password.replaceAll(/\s+/g, "");
+
+  //validation
+  if (!nameC || nameC == " ") return res.status(400).send("Name is required");
+  if (!email) return res.status(400).send("Email is required");
+  const emailUpper = email.toUpperCase();
+  if (!password || password.length < 8)
+    return res
+      .status(400)
+      .send(
+        "Password is required and should be minimum 8 characters & maximum 64 characters long"
+      );
+  const s1 = "Hello";
+  const s2 = "Hello2";
+  const match = (password, confirmPassword) => {
+    if (password !== confirmPassword) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  if (password !== confirmPassword)
+    return res.status(400).send("Passwords don't match");
+
+  if (!question) return res.status(400).send("Select a question");
+  if (!secretC || secretC == " ")
+    return res.status(400).send("Answer is required");
+  const nameClean = nameC.charAt(0).toUpperCase();
+  const len = name.length;
+  const name2 = nameC.substring(1, len + 1);
+  name = nameClean + name2;
+  const secretUpper = secretC.toUpperCase();
+  const exist = await User.findOne({ email: emailUpper });
+  if (exist) return res.status(400).send("Email is taken");
+  const availableOtp = await OtpStore.findOne({ email: emailUpper });
+  const otp2 = availableOtp.otp;
+  if (otp2 !== otp) {
+    return res.status(400).send("Please Enter Valid OTP");
+  }
+  if (otp2 === otp) {
+    const OTP = await OtpStore.findOne({ email: emailUpper });
+    const OtpId = OTP._id;
+    const ok = await OtpStore.findByIdAndDelete(OtpId);
+  }
   //hash password
   const hashedPassword = await hashPassword(password);
   const user = new User({
@@ -472,7 +574,7 @@ const findPeople = async (req, res) => {
         people[i].createdAt = undefined;
       }
     }
-    console.log(people);
+    //console.log(people);
     res.json(people);
   } catch (err) {
     console.log(err);
@@ -569,8 +671,7 @@ const sentRequest = async (req, res) => {
       updateduser.createdAt = undefined;
       updateduser.question = undefined;
       updateduser.updatedAt = undefined;
-      updateduser.followers = undefined;
-      updateduser.following = undefined;
+
       return res.send(updateduser);
     } else {
       const ok = await User.updateOne(
@@ -587,8 +688,7 @@ const sentRequest = async (req, res) => {
       updateduser.createdAt = undefined;
       updateduser.question = undefined;
       updateduser.updatedAt = undefined;
-      updateduser.followers = undefined;
-      updateduser.following = undefined;
+
       return res.send(updateduser);
     }
   } catch (err) {
@@ -689,8 +789,7 @@ const cancelRequest = async (req, res) => {
       updateduser.createdAt = undefined;
       updateduser.question = undefined;
       updateduser.updatedAt = undefined;
-      updateduser.followers = undefined;
-      updateduser.following = undefined;
+
       return res.send(updateduser);
     }
     if (pendingRequests) {
@@ -719,8 +818,7 @@ const cancelRequest = async (req, res) => {
       updateduser.createdAt = undefined;
       updateduser.question = undefined;
       updateduser.updatedAt = undefined;
-      updateduser.followers = undefined;
-      updateduser.following = undefined;
+
       return res.send(updateduser);
     }
   } catch (err) {
@@ -853,8 +951,7 @@ const acceptRequest = async (req, res) => {
     updateduser.createdAt = undefined;
     updateduser.question = undefined;
     updateduser.updatedAt = undefined;
-    updateduser.followers = undefined;
-    updateduser.following = undefined;
+
     return res.send(updateduser);
   } catch (err) {
     console.log(err);
@@ -906,8 +1003,7 @@ const deleteRequest = async (req, res) => {
     updateduser.createdAt = undefined;
     updateduser.question = undefined;
     updateduser.updatedAt = undefined;
-    updateduser.followers = undefined;
-    updateduser.following = undefined;
+
     return res.send(updateduser);
   } catch (err) {
     console.log(err);
@@ -920,7 +1016,7 @@ const findFollowing = async (req, res) => {
     const following = user.following;
     if (following) {
       const people = await User.find({ _id: following }).limit(3);
-      console.log(people);
+
       if (people.length > 0) {
         for (let i = 0; i < people.length; i++) {
           people[i].email = undefined;
@@ -937,7 +1033,7 @@ const findFollowing = async (req, res) => {
           people[i].createdAt = undefined;
         }
       }
-      console.log(people);
+
       return res.json(people);
     }
   } catch (err) {
@@ -951,7 +1047,7 @@ const findFollowingAll = async (req, res) => {
     const following = user.following;
     if (following) {
       const people = await User.find({ _id: following });
-      console.log(people);
+
       if (people.length > 0) {
         for (let i = 0; i < people.length; i++) {
           people[i].email = undefined;
@@ -983,14 +1079,16 @@ const unfollowPeople = async (req, res) => {
     const person2 = await User.findById(req.body._id);
     let person1Following = person1.following;
     let person2Following = person2.following;
-    for (let i = 0; i < person1Following; i++) {
+    for (let i = 0; i < person1Following.length; i++) {
       if (person1Following[i] == req.body._id) {
         person1Following.splice(i, 1);
+        break;
       }
     }
-    for (let i = 0; i < person2Following; i++) {
+    for (let i = 0; i < person2Following.length; i++) {
       if (person2Following[i] == req.auth._id) {
         person2Following.splice(i, 1);
+        break;
       }
     }
 
@@ -1016,15 +1114,67 @@ const unfollowPeople = async (req, res) => {
     updateduser.createdAt = undefined;
     updateduser.question = undefined;
     updateduser.updatedAt = undefined;
-    updateduser.followers = undefined;
-    updateduser.following = undefined;
+
     return res.send(updateduser);
   } catch (err) {
     console.log(err);
     return res.send(err);
   }
 };
+
+const searchUser = async (req, res) => {
+  try {
+    const name = req.params.query;
+    const searchTerm = name;
+    const regex = new RegExp(searchTerm, "i");
+    let users;
+    users = await User.find({ name: { $regex: regex } });
+
+    // const users = await User.find({ name: name });
+    if (users.length > 0) {
+      for (let i = 0; i < users.length; i++) {
+        users[i].email = undefined;
+        users[i].password = undefined;
+        users[i].question = undefined;
+        users[i].userName = undefined;
+        users[i].secret = undefined;
+        users[i].following = undefined;
+        users[i].followers = undefined;
+        users[i].pendingRequests = undefined;
+        users[i].createdAt = undefined;
+        users[i].updatedAt = undefined;
+        users[i].__v = undefined;
+      }
+    }
+    return res.send(users);
+  } catch (err) {
+    return res.send(err);
+  }
+};
+const fetchPrivateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.params._id);
+
+    if (user) {
+      user.email = undefined;
+      user.password = undefined;
+      user.question = undefined;
+      user.userName = undefined;
+      user.secret = undefined;
+      user.following = undefined;
+      user.followers = undefined;
+      user.pendingRequests = undefined;
+      user.createdAt = undefined;
+      user.updatedAt = undefined;
+      user.__v = undefined;
+      return res.send(user);
+    } else return res.status(400).send("Error Occured");
+  } catch (err) {
+    return res.send(err);
+  }
+};
 module.exports = {
+  sendOtp,
   register,
   login,
   currentUser,
@@ -1041,4 +1191,6 @@ module.exports = {
   findFollowing,
   findFollowingAll,
   unfollowPeople,
+  searchUser,
+  fetchPrivateProfile,
 };

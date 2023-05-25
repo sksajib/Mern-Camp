@@ -1,6 +1,7 @@
 import { SyncOutlined } from "@ant-design/icons";
 const AuthForm = ({
   formName,
+  sendOtp,
   handleSubmit,
   name,
   setName,
@@ -16,9 +17,12 @@ const AuthForm = ({
   setSecret,
   loading,
   buttonValue,
+  otpSend,
+  otp,
+  setOtp,
 }) => {
   return (
-    <form onSubmit={handleSubmit}>
+    <form>
       {formName !== "Registration Form" && (
         <div className="text-form form-group py-1 text-center">
           <label
@@ -167,7 +171,41 @@ const AuthForm = ({
               !secret ||
               !confirmPassword
             }
-            type="submit"
+            className="btn btn-success "
+            onClick={(e) => sendOtp(e)}
+          >
+            Send OTP
+          </button>
+        </div>
+      )}
+      {formName === "Registration Form" && (
+        <div className="form-group py-2">
+          <small>
+            <label className=" py-2">Go to your mail and find the OTP</label>
+          </small>
+          <input
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+            type="text"
+            className="form-control"
+            placeholder="Enter OTP"
+            disabled={!otpSend}
+          />
+        </div>
+      )}
+      {formName === "Registration Form" && (
+        <div className="d-grid gap-5 md-3 py-3">
+          <button
+            disabled={
+              !name ||
+              !email ||
+              !password ||
+              !question ||
+              !secret ||
+              !confirmPassword ||
+              !otp
+            }
+            onClick={(e) => handleSubmit(e)}
             className="btn btn-success "
           >
             {loading ? <SyncOutlined spin className="py-1" /> : buttonValue}
@@ -178,7 +216,7 @@ const AuthForm = ({
         <div className="d-grid gap-5 md-3 py-3">
           <button
             disabled={!email || !password}
-            type="submit"
+            onClick={(e) => handleSubmit(e)}
             className="btn btn-success "
           >
             {loading ? <SyncOutlined spin className="py-1" /> : buttonValue}
@@ -191,7 +229,7 @@ const AuthForm = ({
             disabled={
               !email || !password || !question || !secret || !confirmPassword
             }
-            type="submit"
+            onClick={(e) => handleSubmit(e)}
             className="btn btn-success "
           >
             {loading ? <SyncOutlined spin className="py-1" /> : buttonValue}

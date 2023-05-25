@@ -50,8 +50,6 @@ const ProfileUpdate = () => {
         setImage(state.user.photo);
       }
     }
-    console.log(changePassword);
-    console.log(image);
   }, [state, image, name, email, id, userName, changePassword]);
 
   if (!state) {

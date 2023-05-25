@@ -21,12 +21,38 @@ const Register = () => {
   const formName = "Registration Form";
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
+  const [otpSend, setOtpSend] = useState(false);
+  const [otp, setOtp] = useState("");
 
   // useEffect(() => {
   //   console.log(state);
   //   state !== null && state.token !== "" && router.push("/");
   // }, [state]);
+  const sendOtp = async (e) => {
+    e.preventDefault();
+    const auth = JSON.parse(window.localStorage.getItem("auth"));
 
+    if (auth && auth.token) {
+      setLoading(false);
+      router.push("/user/dashboard");
+    } else {
+      try {
+        const { data } = await axios.post(`/send-otp`, {
+          name,
+          email,
+          password,
+          confirmPassword,
+          question,
+          secret,
+        });
+        console.log(data);
+        setOtpSend(true);
+        toast.success("OTP Send Successfully");
+      } catch (err) {
+        toast.error(err);
+      }
+    }
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -45,6 +71,7 @@ const Register = () => {
           confirmPassword,
           question,
           secret,
+          otp,
         });
         //for clearing the input after successfull registration
         setLoading(false);
@@ -54,6 +81,7 @@ const Register = () => {
         setConfirmPassword("");
         setQuestion("");
         setSecret("");
+        setOtp("");
         setOk(data.ok);
       } catch (err) {
         setLoading(false);
@@ -100,6 +128,7 @@ const Register = () => {
                 >
                   <AuthForm
                     formName={formName}
+                    sendOtp={sendOtp}
                     handleSubmit={handleSubmit}
                     name={name}
                     setName={setName}
@@ -115,6 +144,9 @@ const Register = () => {
                     setSecret={setSecret}
                     loading={loading}
                     buttonValue={buttonValue}
+                    otpSend={otpSend}
+                    otp={otp}
+                    setOtp={setOtp}
                   />
                 </div>
               </div>

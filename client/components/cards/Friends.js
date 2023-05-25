@@ -21,11 +21,10 @@ const Friends = ({ people, setPeople, findPeople }) => {
         id,
       });
 
-      console.log(data);
       const auth = JSON.parse(window.localStorage.getItem("auth"));
-      console.log(auth.user);
+
       auth.user = data;
-      console.log(auth);
+
       window.localStorage.setItem("auth", JSON.stringify(auth));
       setState({ ...state, user: data });
       let filtered = people.filter((p) => p._id !== person._id);
@@ -44,7 +43,7 @@ const Friends = ({ people, setPeople, findPeople }) => {
             <h3>Friend List</h3>
           </div>
           <div className="card-body bg-dark text-light">
-            <div className="row row-cols-3 row-cols-md-3 g-4">
+            <div className="row row-cols-2 row-cols-md-3 g-4">
               {people &&
                 people.map((person) => (
                   <div key={person._id}>

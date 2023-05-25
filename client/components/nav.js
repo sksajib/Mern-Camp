@@ -22,10 +22,6 @@ const Nav = () => {
   }
   //console.log(window.location.pathname);
   useEffect(() => {
-    console.log("Current =>", router.pathname);
-    //console.log(state);
-    //setCurrent(state);
-    // console.log(current);
     const event = new Event("stateUpdate");
     window.dispatchEvent(event);
   }, [router.pathname]);
