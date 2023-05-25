@@ -13,7 +13,7 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
   path: "/socket.io",
   cors: {
-    origin: ["http://localhost:3030"],
+    origin: [process.env.CLIENT_URL],
     allowedHeaders: ["Content-type"],
   },
 });
