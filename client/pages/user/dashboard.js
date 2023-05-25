@@ -7,7 +7,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import PostList from "../../components/cards/PostList";
 import { Avatar } from "antd";
-import Friends from "./PeopleList/friends";
+import Friends from "./PeopleList/friends2";
 import { Pagination } from "antd";
 import io from "socket.io-client";
 

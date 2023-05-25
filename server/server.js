@@ -13,7 +13,7 @@ const http = require("http").createServer(app);
 const io = require("socket.io")(http, {
   path: "/socket.io",
   cors: {
-    origin: [process.env.CLIENT_URL],
+    origin: [process.env.CLIENT_URL, "http://localhost:3000"],
     allowedHeaders: ["Content-type"],
   },
 });
@@ -25,7 +25,7 @@ app.use(express.json({ limit: "5mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: [process.env.CLIENT_URL],
+    origin: [process.env.CLIENT_URL, "http://localhost:3000"],
   })
 );
 fs.readdirSync("./routes").map((r) =>
