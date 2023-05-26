@@ -65,7 +65,7 @@ const Friends = () => {
               people.map((person) => (
                 <div key={person._id}>
                   <div className="row">
-                    <div className="col-5 col-md-5 d-flex justify-content-start">
+                    <div className="col-7 col-md-5 d-flex justify-content-start">
                       {!person.photo ? (
                         <Avatar size={70} className="mt-1 ">
                           {person.name.charAt(0)}
@@ -79,15 +79,15 @@ const Friends = () => {
                       )}
                       <span className="mt-3 h5">{person.name}</span>
                     </div>
-                    <div className="col-7 col-md-7 d-flex justify-content-end">
+                    <div className="col-5 col-md-7 d-flex justify-content-end">
                       <button
-                        className="btn btn-primary mt-2"
+                        className="btn btn-primary mt-2 btn-sm btn-md-md"
                         onClick={() => viewProfileHandler(person)}
                       >
                         <h5>View Profile</h5>
                       </button>
                       <button
-                        className="btn btn-danger ms-2 mt-2"
+                        className="btn btn-danger ms-2 mt-2 btn-sm btn-md-md"
                         onClick={() => unfollowHandler(person)}
                       >
                         <h5>Unfriend</h5>

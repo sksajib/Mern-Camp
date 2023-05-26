@@ -8,8 +8,8 @@ import { UserContext } from "../context";
 import UserRoute from "../components/routes/UserRoute";
 
 function Login() {
-  const [email, setEmail] = useState("sajibsaha@gmail.com");
-  const [password, setPassword] = useState("11111111");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [ok, setOk] = useState(false);
   const [loading, setLoading] = useState(false);
   const [state, setState] = useContext(UserContext);
