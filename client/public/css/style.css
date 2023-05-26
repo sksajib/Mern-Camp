@@ -80,8 +80,8 @@ nav {
 }
 .size2 {
   width: 25px;
-  font-size: 40px;
-  margin-right: 10px;
+  font-size: 20px;
+  margin-right: 5px;
 }
 .size2:hover {
   cursor: pointer;

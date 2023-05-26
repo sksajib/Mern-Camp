@@ -332,8 +332,8 @@ const PostList = ({ posts, fetchUserPosts }) => {
                           hidden
                         />
                       </label>
-                      <label className="ms-3">
-                        <h4>{post.likes.length} likes</h4>
+                      <label className="ms-2">
+                        <h6>{post.likes.length} likes</h6>
                       </label>
                     </div>
 
@@ -345,8 +345,8 @@ const PostList = ({ posts, fetchUserPosts }) => {
                           hidden
                         />
                       </label>
-                      <label className="ms-3">
-                        <h4>{post.comments.length} Comments</h4>
+                      <label className="ms-2">
+                        <h6>{post.comments.length} Comments</h6>
                       </label>
                     </div>
                     <div>
