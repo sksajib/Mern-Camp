@@ -8,11 +8,11 @@ import { UserContext } from "../context";
 import { useRouter } from "next/router";
 import UserRoute from "../components/routes/UserRoute";
 const Register = () => {
-  const [name, setName] = useState("Sajib");
-  const [email, setEmail] = useState("sajibsaha@gmail.com");
-  const [password, setPassword] = useState("11111111");
-  const [confirmPassword, setConfirmPassword] = useState("11111111");
-  const [secret, setSecret] = useState("red");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [secret, setSecret] = useState("");
   const [question, setQuestion] = useState("");
   const [ok, setOk] = useState(false);
   const [image, setImage] = useState();
