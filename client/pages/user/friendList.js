@@ -81,13 +81,13 @@ const Friends = () => {
                     </div>
                     <div className="col-5 col-md-7 d-flex justify-content-end">
                       <button
-                        className="btn btn-primary mt-2 btn-sm btn-md-md"
+                        className="btn btn-primary mt-2 ms-1 btn-sm "
                         onClick={() => viewProfileHandler(person)}
                       >
                         <h5>View Profile</h5>
                       </button>
                       <button
-                        className="btn btn-danger ms-2 mt-2 btn-sm btn-md-md"
+                        className="btn btn-danger ms-2 mt-1 btn-sm "
                         onClick={() => unfollowHandler(person)}
                       >
                         <h5>Unfriend</h5>
