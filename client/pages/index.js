@@ -146,10 +146,9 @@ const Home = () => {
             className="row py-2 ml-0"
             style={{ height: "100%", width: "100%" }}
           >
-            <div className="col-md-9">
-              <pre>
-                <PostList posts={collection} fetchUserPosts={fetchUserPosts} />
-              </pre>
+            <div className="col-12 col-md-9">
+              <PostList posts={collection} fetchUserPosts={fetchUserPosts} />
+
               <Pagination
                 showQuickJumper
                 current={page}
@@ -159,7 +158,7 @@ const Home = () => {
               />
             </div>
 
-            <div className="col-md-3 ">
+            <div className="col-md-3  ">
               <Search />
               <People people={people} total={total} />
             </div>

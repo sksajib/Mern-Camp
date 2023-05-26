@@ -231,9 +231,9 @@ const dashboard = () => {
                 image={image}
                 value={value}
               />
-              <pre>
-                <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
-              </pre>
+
+              <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
+
               <Pagination
                 showQuickJumper
                 defaultCurrent={page}
