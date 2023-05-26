@@ -63,20 +63,20 @@ const Friends = ({ people, setPeople, findPeople }) => {
                               />
                             )}
                           </div>
-                          <h2>{person.name}</h2>
+                          <h4>{person.name}</h4>
                         </div>
 
                         <div className="card-body">
                           <div className="d-grid gap-2">
                             <button
-                              className="btn btn-primary"
+                              className="btn btn-primary btn-sm btn-md-lg"
                               type="button"
                               onClick={() => viewProfileHandler(person)}
                             >
                               View Profile
                             </button>
                             <button
-                              className="btn btn-danger"
+                              className="btn btn-danger btn-sm btn-md-lg"
                               type="button"
                               onClick={() => unfriendHandler(person)}
                             >
