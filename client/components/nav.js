@@ -15,10 +15,16 @@ const Nav = () => {
   const router = useRouter();
   ///const channel = new BroadcastChannel("my-channel");
   let name = "";
+  let name2 = "";
   if (state && state.user) {
     name = String(state.user.name);
     const [first, ...last] = name.split(" ");
     name = first;
+
+    if (name.length > 8) {
+      name2 = name.slice(0, 8);
+      name = name2;
+    }
   }
   //console.log(window.location.pathname);
   useEffect(() => {
@@ -49,15 +55,15 @@ const Nav = () => {
   };
 
   return (
-    <div className="container sticky-top">
+    <div className="container sticky-top ">
       <div className="row">
         <nav
-          className=" col-12 nav sticky-top bg-light text-dark justify-content-between "
-          style={{ height: "73px" }}
+          className=" col-12 nav sticky-top bg-light h5 text-dark justify-content-between "
+          style={{ height: "63px" }}
         >
           <div>
             <Link href="/" className={`nav-link text-dark  ${isActive("/")}`}>
-              <h3 className="pt-1">Home</h3>
+              <h5 className="pt-1">Home</h5>
             </Link>
           </div>
           {state === null && (
@@ -67,7 +73,7 @@ const Nav = () => {
                   href="/login"
                   className={`nav-link text-dark ${isActive("/login")}`}
                 >
-                  <h3>Login</h3>
+                  <h5>Login</h5>
                 </Link>
               </div>
               <div>
@@ -75,7 +81,7 @@ const Nav = () => {
                   href="/register"
                   className={`nav-link text-dark ${isActive("/register")}`}
                 >
-                  <h3>Register</h3>
+                  <h5>Register</h5>
                 </Link>
               </div>
             </>
@@ -86,15 +92,15 @@ const Nav = () => {
             <>
               <div>
                 <Link href="/" className=" text-dark">
-                  <Avatar src="/images/message.png" size={72} className="dp" />
+                  <Avatar src="/images/message.png" size={52} className="dp" />
                 </Link>
               </div>
 
-              <div className=" dropdown">
+              <div className=" dropdown ">
                 <a
                   role="button"
                   href="/user/dashboard"
-                  className={`nav-link text-dark  ${
+                  className={`nav-link text-dark overflow-hidden  ${
                     isActive("/user/dashboard") ||
                     isActive("/user/profile/update") ||
                     isActive("/user/PeopleList/sentFriendRequest") ||
@@ -103,10 +109,10 @@ const Nav = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <h3 className="pt-1">
+                  <h5 className="pt-1 ">
                     {state && state.user && name}
                     <CaretDownOutlined className="me-3" />
-                  </h3>
+                  </h5>
                 </a>
                 <ul
                   className="dropdown-menu dropdown-menu-end"

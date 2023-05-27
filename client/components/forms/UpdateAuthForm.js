@@ -128,7 +128,6 @@ const UpdateAuthForm = ({
           value={userName}
           onChange={(e) => setUserName(e.target.value)}
           type="text"
-          autoComplete="username"
           className="form-control"
           placeholder="Enter User Name"
         />
@@ -141,7 +140,6 @@ const UpdateAuthForm = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           type="text"
-          autoComplete="username"
           className="form-control"
           placeholder="Enter name"
         />
@@ -155,7 +153,6 @@ const UpdateAuthForm = ({
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
-          autoComplete="email"
           className="form-control"
           placeholder="Enter Email"
         />
