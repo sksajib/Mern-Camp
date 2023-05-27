@@ -52,18 +52,18 @@ const Friends = ({ people, setPeople, findPeople }) => {
                         <div className="card-header text-dark text-center">
                           <div>
                             {!person.photo ? (
-                              <Avatar size={100} className="mt-1 dp">
+                              <Avatar size={50} className="mt-1 dp">
                                 {person.name.charAt(0)}
                               </Avatar>
                             ) : (
                               <Avatar
                                 src={person.photo}
-                                size={100}
+                                size={50}
                                 className="mt-1 dp"
                               />
                             )}
                           </div>
-                          <h4>{person.name}</h4>
+                          <h6>{person.name}</h6>
                         </div>
 
                         <div className="card-body">

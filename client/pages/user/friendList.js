@@ -88,7 +88,7 @@ const Friends = () => {
                           <h5>View Profile</h5>
                         </button>
                         <button
-                          className="btn btn-danger ms-2 mt-1 btn-sm "
+                          className="btn btn-danger ms-2 mt-2 btn-sm "
                           onClick={() => unfollowHandler(person)}
                         >
                           <h5>Unfriend</h5>

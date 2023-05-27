@@ -71,6 +71,12 @@ const viewPost = () => {
   const handleMenu = () => {
     setClicked(!isClicked);
   };
+  const handleDelete = async (id) => {
+    setId(id);
+    console.log(id);
+
+    setOk(true);
+  };
   const onConfirm = async (id) => {
     try {
       console.log("ok");
@@ -334,14 +340,14 @@ const viewPost = () => {
                   <div className="row ">
                     <div className="col-2 col-md-1 ">
                       {!state.user.photo ? (
-                        <Avatar size={70} className="mt-1">
+                        <Avatar size={40} className="mt-3">
                           {state.user.name.charAt(0)}
                         </Avatar>
                       ) : (
                         <Avatar
                           src={state.user.photo}
-                          size={70}
-                          className="mt-1 ms-2"
+                          size={40}
+                          className="mt-3 "
                         />
                       )}
                     </div>
