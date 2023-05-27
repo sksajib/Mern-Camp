@@ -354,7 +354,7 @@ const viewPost = () => {
                     <div className="col-10 col-md-11">
                       <form onSubmit={(e) => addComment(e, post)}>
                         <div className="row">
-                          <div className="col-9 mt-3">
+                          <div className="col-7 mt-3">
                             <input
                               type="text"
                               className="form-control "
@@ -363,8 +363,8 @@ const viewPost = () => {
                               onChange={(e) => setComment(e.target.value)}
                             />
                           </div>
-                          <div className="col-3">
-                            <button className="btn form-control btn-primary btn-md btn-block mt-3 ">
+                          <div className="col-5">
+                            <button className="btn form-control btn-primary btn-sm mt-3 ">
                               Post
                             </button>
                           </div>
