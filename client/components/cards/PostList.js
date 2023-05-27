@@ -384,7 +384,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                               onChange={(e) => setComment(e.target.value)}
                             />
                           </div>
-                          <div className="col-3 me-1">
+                          <div className="col-3">
                             <button className="btn form-control btn-primary btn-md  mt-3  ">
                               Post
                             </button>
