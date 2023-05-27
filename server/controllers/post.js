@@ -82,8 +82,10 @@ const uploadImage = async (req, res) => {
     //console.log(image);
     if (url) {
       const publicId = url.split("/").pop().split(".")[0];
+
       const result2 = await cloudinary.uploader.destroy(publicId);
     }
+
     const result = await cloudinary.uploader.upload(req.files.image.path);
 
     //console.log("uploaded image url=>", result);

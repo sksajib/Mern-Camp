@@ -21,7 +21,7 @@ mongoose
   .connect(process.env.DATABASE)
   .then(() => console.log("DB Connected"))
   .catch((err) => console.log("DB connection error =>", err));
-app.use(express.json({ limit: "5mb" }));
+app.use(express.json({ limit: "100mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
