@@ -359,7 +359,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                     </div>
                   </div>
                   <div className="row ">
-                    <div className="col-2 col-md-1 ">
+                    <div className="col-2 col-md-1">
                       {!state.user.photo ? (
                         <Avatar size={40} className="mt-3">
                           {state.user.name.charAt(0)}
