@@ -421,7 +421,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                                   </label>
                                 </div>
                                 <div>
-                                  <label>
+                                  <label className="h8">
                                     {moment(comment.created).fromNow()}
                                   </label>
                                   <label className="ms-2">
