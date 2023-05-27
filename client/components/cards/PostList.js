@@ -125,12 +125,12 @@ const PostList = ({ posts, fetchUserPosts }) => {
       toast.error(err);
     }
   };
-  const removeComment = async (e, post, comment) => {
+  const removeComment = async (e, post, comment2) => {
     e.preventDefault();
     try {
       const { data } = await axios.put("/remove-comment", {
         postId: post._id,
-        comment,
+        comment: comment2,
       });
       console.log(data);
       setVisible(false);
@@ -433,7 +433,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                                           <DeleteOutlined
                                             className="ps-1 text-danger size2"
                                             onClick={(e) =>
-                                              removeComment(e, comment)
+                                              removeComment(e, post, comment)
                                             }
                                           />
                                         </div>
