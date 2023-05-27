@@ -215,10 +215,7 @@ const dashboard = () => {
               </label>
             </div>
           </div>
-          <div
-            className="row py-2 ml-0"
-            style={{ height: "100%", width: "100%" }}
-          >
+          <div className="row " style={{ height: "100%", width: "100%" }}>
             <div className="col-md-12">
               <CreatePostForm
                 postUpload={postUpload}
