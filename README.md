@@ -19,7 +19,13 @@
     Create .env file in the root of the server folder .
     # In .env file enter below lines:
         DATABASE=MONGODB ATLAS DATABASE CONNECTION STRING (Make sure to give the username and password correctly)
-        PORT:3006(Give any free port in which the server will run)
+        PORT=3006(Give any free port in which the server will run
+        JWT_SECRET=(Give any random numbers of any length and keep it secret)
+        
+        #Sign up to cloudinary go to dashboard and find cloud name,Api key and API secret
+        CLOUDINARY_NAME=(Cloud name)
+        CLOUDINARY_KEY=(API KEY)
+        CLOUDINARY_SECRET=(API SECRET)
         Save 
     Run <npm start> in the terminal 
 
