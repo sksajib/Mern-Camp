@@ -146,15 +146,10 @@ const PostList = ({ posts, fetchUserPosts }) => {
   };
   return (
     <div>
-      <pre>
-        {posts &&
-          posts.map((post, index) => (
-            <div
-              key={post._id}
-              className="card mt-2 mb-3"
-              style={{ overflow: "hidden" }}
-            >
-              {/* {(id = post._id)} */}
+      {posts &&
+        posts.map((post, index) => (
+          <div key={post._id}>
+            <div className="card mt-2 mb-3" style={{ overflow: "hidden" }}>
               {post.postedBy && (
                 <div>
                   <div className="card-header">
@@ -401,17 +396,19 @@ const PostList = ({ posts, fetchUserPosts }) => {
                         index >= post.comments.length - 2 && (
                           <div key={comment._id}>
                             <div className="card">
-                              <div className="card-header d-flex justify-content-between">
-                                <div>
+                              <div className="card-header d-flex justify-content-between overflow-auto">
+                                <div
+                                  style={{ width: "auto", overflow: "clip" }}
+                                >
                                   <label>
                                     {!comment.postedBy.photo ? (
-                                      <Avatar size={50} className="mt-1">
+                                      <Avatar size={25} className="mt-1">
                                         {comment.postedBy.name.charAt(0)}
                                       </Avatar>
                                     ) : (
                                       <Avatar
                                         src={comment.postedBy.photo}
-                                        size={50}
+                                        size={25}
                                         className="mt-1"
                                       />
                                     )}
@@ -420,11 +417,13 @@ const PostList = ({ posts, fetchUserPosts }) => {
                                     {comment.postedBy.name}
                                   </label>
                                 </div>
-                                <div>
-                                  <label className="h8">
+                                <div
+                                  style={{ width: "auto", overflow: "auto" }}
+                                >
+                                  <label className="h8 text-muted">
                                     {moment(comment.created).fromNow()}
                                   </label>
-                                  <label className="ms-2">
+                                  <label className="ms-1">
                                     {state &&
                                       state.user &&
                                       (comment.postedBy._id == state.user._id ||
@@ -432,7 +431,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                                           state.user._id) && (
                                         <div className=" mt-1">
                                           <DeleteOutlined
-                                            className="ps-2 text-danger size2"
+                                            className="ps-1 text-danger size2"
                                             onClick={(e) =>
                                               removeComment(e, comment)
                                             }
@@ -458,8 +457,9 @@ const PostList = ({ posts, fetchUserPosts }) => {
                 </div>
               )}
             </div>
-          ))}
-      </pre>
+          </div>
+        ))}
+
       <pre>{!posts && "Your Posts will appear here"}</pre>
     </div>
   );
