@@ -10,8 +10,8 @@ const ProfileUpdate = () => {
   const [state, setState] = useContext(UserContext);
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState(null);
+  const [email, setEmail] = useState(null);
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,7 +22,7 @@ const ProfileUpdate = () => {
   const [loading, setLoading] = useState(false);
   const buttonValue = "Update";
   const [id, setId] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(null);
   const [value, setValue] = useState("");
   const [uploading, setUploading] = useState(false);
 
@@ -32,17 +32,17 @@ const ProfileUpdate = () => {
 
   useEffect(() => {
     if (state) {
-      if (!name) {
+      if (!name && name !== "") {
         setName(state.user.name);
       }
-      if (!email) {
+      if (!email && email !== "") {
         setEmail(state.user.email);
       }
 
       if (!id) {
         setId(state.user._id);
       }
-      if (!userName) {
+      if (!userName && userName !== "") {
         setUserName(state.user.userName);
       }
 
