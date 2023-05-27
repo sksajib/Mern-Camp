@@ -375,7 +375,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
                     <div className="col-10 col-md-11">
                       <form onSubmit={(e) => addComment(e, post)}>
                         <div className="row">
-                          <div className="col-7 mt-3">
+                          <div className="col-8 mt-3">
                             <input
                               type="text"
                               className="form-control "
@@ -384,8 +384,8 @@ const PostList = ({ posts, fetchUserPosts }) => {
                               onChange={(e) => setComment(e.target.value)}
                             />
                           </div>
-                          <div className="col-5 ">
-                            <button className="btn form-control btn-primary btn-md  mt-3 ">
+                          <div className="col-3 me-1">
+                            <button className="btn form-control btn-primary btn-md  mt-3  ">
                               Post
                             </button>
                           </div>
@@ -400,44 +400,55 @@ const PostList = ({ posts, fetchUserPosts }) => {
                         (comment, index) =>
                           index >= post.comments.length - 2 && (
                             <div key={comment._id}>
-                              <li className="list-group-item d-flex justify-content-between align-items-start">
-                                <div className="ms-2 me-auto">
-                                  {" "}
+                              <div className="card">
+                                <div className="card-header d-flex justify-content-between">
                                   <div>
-                                    {!comment.postedBy.photo ? (
-                                      <Avatar size={50} className="mt-1">
-                                        {comment.postedBy.name.charAt(0)}
-                                      </Avatar>
-                                    ) : (
-                                      <Avatar
-                                        src={comment.postedBy.photo}
-                                        size={50}
-                                        className="mt-1"
-                                      />
-                                    )}
-                                    {comment.postedBy.name}
+                                    <label>
+                                      {!comment.postedBy.photo ? (
+                                        <Avatar size={50} className="mt-1">
+                                          {comment.postedBy.name.charAt(0)}
+                                        </Avatar>
+                                      ) : (
+                                        <Avatar
+                                          src={comment.postedBy.photo}
+                                          size={50}
+                                          className="mt-1"
+                                        />
+                                      )}
+                                    </label>
+                                    <label className="ms-1">
+                                      {comment.postedBy.name}
+                                    </label>
                                   </div>
-                                  <div className="mt-2 ms-3">
+                                  <div>
+                                    <label>
+                                      {moment(comment.created).fromNow()}
+                                    </label>
+                                    <label className="ms-2">
+                                      {state &&
+                                        state.user &&
+                                        (comment.postedBy._id ==
+                                          state.user._id ||
+                                          post.postedBy._id ==
+                                            state.user._id) && (
+                                          <div className=" mt-1">
+                                            <DeleteOutlined
+                                              className="ps-2 text-danger size2"
+                                              onClick={(e) =>
+                                                removeComment(e, comment)
+                                              }
+                                            />
+                                          </div>
+                                        )}
+                                    </label>
+                                  </div>
+                                </div>
+                                <div className="card-body text-wrap overflow-hidden">
+                                  <div className="ms-2 mt-2">
                                     {comment.text}
                                   </div>
                                 </div>
-                                <span className="badge rounded-pill text-muted">
-                                  {moment(comment.created).fromNow()}
-                                  {state &&
-                                    state.user &&
-                                    (comment.postedBy._id == state.user._id ||
-                                      post.postedBy._id == state.user._id) && (
-                                      <div className="ml-auto mt-1">
-                                        <DeleteOutlined
-                                          className="ps-2 text-danger size2"
-                                          onClick={(e) =>
-                                            removeComment(e, post, comment)
-                                          }
-                                        />
-                                      </div>
-                                    )}
-                                </span>
-                              </li>
+                              </div>
                             </div>
                           )
                       )}
@@ -445,9 +456,9 @@ const PostList = ({ posts, fetchUserPosts }) => {
                   )}
                   <div
                     onClick={() => viewPost(post)}
-                    className="d-flex justify-content-center text-primary dp"
+                    className="d-flex justify-content-center text-primary dp mt-2"
                   >
-                    <h3> View All Comments</h3>
+                    <h5> View All Comments</h5>
                   </div>
                 </div>
               )}

@@ -306,7 +306,7 @@ const viewPost = () => {
                       </div>
                     )}
                   </div>
-                  <div className="card-footer d-flex justify-content-evenly">
+                  <div className="card-footer d-flex justify-content-evenly ">
                     <div>
                       <label>
                         <HeartOutlined
@@ -319,8 +319,8 @@ const viewPost = () => {
                         />
                         <button onClick={() => handleLike(post._id)} hidden />
                       </label>
-                      <label className="ms-3">
-                        <h4>{post.likes.length} likes</h4>
+                      <label className="ms-2 mt-1">
+                        <h6>{post.likes.length} likes</h6>
                       </label>
                     </div>
 
@@ -329,8 +329,8 @@ const viewPost = () => {
                         <CommentOutlined className="size2 " />
                         <button onClick={() => handleComment(post)} hidden />
                       </label>
-                      <label className="ms-3">
-                        <h4>{post.comments.length} Comments</h4>
+                      <label className="ms-2">
+                        <h6>{post.comments.length} Comments</h6>
                       </label>
                     </div>
                     <div>
@@ -354,7 +354,7 @@ const viewPost = () => {
                     <div className="col-10 col-md-11">
                       <form onSubmit={(e) => addComment(e, post)}>
                         <div className="row">
-                          <div className="col-7 mt-3">
+                          <div className="col-8 mt-3">
                             <input
                               type="text"
                               className="form-control "
@@ -363,8 +363,8 @@ const viewPost = () => {
                               onChange={(e) => setComment(e.target.value)}
                             />
                           </div>
-                          <div className="col-5">
-                            <button className="btn form-control btn-primary btn-sm mt-3 ">
+                          <div className="col-3 me-1">
+                            <button className="btn form-control btn-primary btn-md mt-3 ">
                               Post
                             </button>
                           </div>
@@ -377,40 +377,51 @@ const viewPost = () => {
                     <ol className="list-group">
                       {post.comments.map((comment) => (
                         <div key={comment._id}>
-                          <li className="list-group-item d-flex justify-content-between align-items-start">
-                            <div className="ms-2 me-auto">
-                              {" "}
+                          <div className="card">
+                            <div className="card-header d-flex justify-content-between">
                               <div>
-                                {!comment.postedBy.photo ? (
-                                  <Avatar size={50} className="mt-1">
-                                    {comment.postedBy.name.charAt(0)}
-                                  </Avatar>
-                                ) : (
-                                  <Avatar
-                                    src={comment.postedBy.photo}
-                                    size={50}
-                                    className="mt-1"
-                                  />
-                                )}
-                                {comment.postedBy.name}
-                              </div>
-                              <div className="mt-2 ms-3">{comment.text}</div>
-                            </div>
-                            <span className="badge rounded-pill text-muted">
-                              {moment(comment.created).fromNow()}
-                              {state &&
-                                state.user &&
-                                (comment.postedBy._id == state.user._id ||
-                                  post.postedBy._id == state.user._id) && (
-                                  <div className="ml-auto mt-1">
-                                    <DeleteOutlined
-                                      className="ps-2 text-danger size2"
-                                      onClick={(e) => removeComment(e, comment)}
+                                <label>
+                                  {!comment.postedBy.photo ? (
+                                    <Avatar size={50} className="mt-1">
+                                      {comment.postedBy.name.charAt(0)}
+                                    </Avatar>
+                                  ) : (
+                                    <Avatar
+                                      src={comment.postedBy.photo}
+                                      size={50}
+                                      className="mt-1"
                                     />
-                                  </div>
-                                )}
-                            </span>
-                          </li>
+                                  )}
+                                </label>
+                                <label className="ms-1">
+                                  {comment.postedBy.name}
+                                </label>
+                              </div>
+                              <div>
+                                <label>
+                                  {moment(comment.created).fromNow()}
+                                </label>
+                                <label className="ms-2">
+                                  {state &&
+                                    state.user &&
+                                    (comment.postedBy._id == state.user._id ||
+                                      post.postedBy._id == state.user._id) && (
+                                      <div className=" mt-1">
+                                        <DeleteOutlined
+                                          className="ps-2 text-danger size2"
+                                          onClick={(e) =>
+                                            removeComment(e, comment)
+                                          }
+                                        />
+                                      </div>
+                                    )}
+                                </label>
+                              </div>
+                            </div>
+                            <div className="card-body text-wrap overflow-hidden">
+                              <div className="ms-2 mt-2">{comment.text}</div>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </ol>
