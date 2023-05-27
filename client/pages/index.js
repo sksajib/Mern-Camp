@@ -142,10 +142,7 @@ const Home = () => {
               </label>
             </div>
           </div>
-          <div
-            className="row py-2 ml-0"
-            style={{ height: "100%", width: "100%" }}
-          >
+          <div className="row " style={{ height: "100%", width: "100%" }}>
             <div className="col-12 col-md-9">
               <PostList posts={collection} fetchUserPosts={fetchUserPosts} />
 
