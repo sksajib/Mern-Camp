@@ -298,8 +298,13 @@ const PostList = ({ posts, fetchUserPosts }) => {
                           </span>
                         </div>
                         {post.content !== "<p><br></p>" && (
-                          <div className="mt-2 card">
-                            {post.content && parse(post.content)}
+                          <div
+                            className="mt-2 card overflow-hidden text-wrap"
+                            style={{ width: "100%" }}
+                          >
+                            <span className="mt-2 ms-2 me-2 mb-2">
+                              {post.content && parse(post.content)}
+                            </span>
                           </div>
                         )}
 
@@ -354,20 +359,20 @@ const PostList = ({ posts, fetchUserPosts }) => {
                     </div>
                   </div>
                   <div className="row ">
-                    <div className="col-3 col-md-1 ">
+                    <div className="col-1 col-md-1 ">
                       {!state.user.photo ? (
-                        <Avatar size={55} className="mt-1">
+                        <Avatar size={40} className="mt-3">
                           {state.user.name.charAt(0)}
                         </Avatar>
                       ) : (
                         <Avatar
                           src={state.user.photo}
-                          size={55}
-                          className="mt-1 ms-2"
+                          size={40}
+                          className="mt-3 ms-2"
                         />
                       )}
                     </div>
-                    <div className="col-9 col-md-11">
+                    <div className="col-11 col-md-11">
                       <form onSubmit={(e) => addComment(e, post)}>
                         <div className="row">
                           <div className="col-7 mt-3">
@@ -379,8 +384,8 @@ const PostList = ({ posts, fetchUserPosts }) => {
                               onChange={(e) => setComment(e.target.value)}
                             />
                           </div>
-                          <div className="col-5">
-                            <button className="btn form-control btn-primary btn-sm btn-block mt-3 ">
+                          <div className="col-5 ">
+                            <button className="btn form-control btn-primary btn-md  mt-3 ">
                               Post
                             </button>
                           </div>
