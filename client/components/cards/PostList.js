@@ -146,7 +146,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
   };
   return (
     <div>
-      {posts &&
+      {posts.length > 0 &&
         posts.map((post, index) => (
           <div key={post._id}>
             <div className="card mt-2 mb-3" style={{ overflow: "hidden" }}>
@@ -460,7 +460,7 @@ const PostList = ({ posts, fetchUserPosts }) => {
           </div>
         ))}
 
-      <pre>{!posts && "Your Posts will appear here"}</pre>
+      <pre>{posts.length === 0 && "No Posts"}</pre>
     </div>
   );
 };

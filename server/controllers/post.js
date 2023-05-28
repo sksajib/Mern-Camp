@@ -375,14 +375,27 @@ const fetchFriendPosts = async (req, res) => {
     const perPage = 5;
     //returning posts only by the logged in user
     //const posts = await Post.find() //returning all posts
-    const posts = await Post.find({ postedBy: req.body.id })
-      .skip((currentPage - 1) * perPage)
-      .populate("postedBy", "_id name photo")
-      .populate("comments.postedBy", "_id name photo")
-      .sort({ createdAt: -1 })
-      .limit(perPage);
-    console.log(posts);
-    return res.json(posts);
+    const user = await User.findById(req.auth._id);
+    const following = user.following;
+    let count = 0;
+    if (following.length > 0) {
+      for (let i = 0; i < following.length; i++) {
+        if (following[i] == req.body.id) {
+          const posts = await Post.find({ postedBy: req.body.id })
+            .skip((currentPage - 1) * perPage)
+            .populate("postedBy", "_id name photo")
+            .populate("comments.postedBy", "_id name photo")
+            .sort({ createdAt: -1 })
+            .limit(perPage);
+          count = 1;
+          //console.log(posts);
+          return res.json(posts);
+        }
+      }
+    }
+    if (!following || count === 0) {
+      return res.json([]);
+    }
   } catch (err) {
     console.log(err);
   }
