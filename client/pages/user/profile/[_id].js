@@ -48,50 +48,65 @@ const viewProfile = () => {
   const fetchUserPosts = async () => {
     try {
       const { data } = await axios.post(`/fetch-friend-posts/${page}`, { id });
+      console.log(data);
 
-      data && setPosts(data);
+      if (data) {
+        data && setPosts(data);
+      }
     } catch (err) {
       console.log(err);
     }
   };
-  if (people != null) {
-    return (
-      <UserRoute>
-        <div className="container container-fluid">
-          {people && people.name && posts && (
-            <>
-              <div className="card">
-                <div className="card-header ">
-                  <div>
-                    {!people.photo ? (
-                      <Avatar size={150} className="mt-1 dp">
-                        {people.name.charAt(0)}
-                      </Avatar>
-                    ) : (
-                      <Avatar
-                        src={people.photo}
-                        size={150}
-                        className="mt-1 dp"
-                      />
-                    )}
+  if (state === null) {
+    router.push("/login");
+  }
+  if (state && state.token) {
+    if (people == null) {
+      router.push("/user/dashboard");
+    }
+    if (people != null) {
+      return (
+        <UserRoute>
+          <div className="container container-fluid">
+            {people && people.name && state && state.token && (
+              <>
+                <div className="card">
+                  <div className="card-header ">
+                    <div>
+                      {!people.photo ? (
+                        <Avatar size={150} className="mt-1 dp">
+                          {people.name.charAt(0)}
+                        </Avatar>
+                      ) : (
+                        <Avatar
+                          src={people.photo}
+                          size={150}
+                          className="mt-1 dp"
+                        />
+                      )}
+                    </div>
+                    <div className="mt-2 text-primary h2 ms-2">
+                      {people.name}
+                    </div>
                   </div>
-                  <div className="mt-2 text-primary h2 ms-2">{people.name}</div>
                 </div>
-              </div>
-              <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
-              <div>
-                <Pagination
-                  showQuickJumper
-                  current={page}
-                  total={(totalPostsFriend / 5) * 10}
-                  onChange={(value) => setPage(value)}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </UserRoute>
-    );
+
+                <PostList posts={posts} fetchUserPosts={fetchUserPosts} />
+
+                <div>
+                  <Pagination
+                    showQuickJumper
+                    current={page}
+                    total={(totalPostsFriend / 5) * 10}
+                    onChange={(value) => setPage(value)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+        </UserRoute>
+      );
+    }
   }
 };
 export default viewProfile;

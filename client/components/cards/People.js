@@ -13,7 +13,12 @@ const People = ({ people, total }) => {
   const [add2, setAdd2] = useState(Array(10).fill(false));
 
   const router = useRouter();
-  const handleFollow = async (single, index) => {
+  const viewProfile = async (e, single, index) => {
+    e.preventDefault();
+    router.push(`/user/profile/${single._id}`);
+  };
+  const handleFollow = async (e, single, index) => {
+    e.preventDefault();
     console.log(index, "   ", single._id);
     console.log(length);
     try {
@@ -50,29 +55,39 @@ const People = ({ people, total }) => {
       {people &&
         people.map((single, index) => (
           <div key={single._id} className="card mb-2" style={{ width: "100%" }}>
-            <div className="card-header head align-item-center justify-content-between follow">
+            <div className="card-header head align-item-center justify-content-between ">
               <label>
-                <div
-                  className="row d-flex follow"
-                  onClick={() => handleFollow(single, index)}
-                >
-                  <div className="col-2 text-primary">
+                <div className="row d-flex">
+                  <div className="  col-6 col-md-6 text-light">
+                    {/* <div className="col-2 text-primary">
                     <PlusOutlined hidden={add2[index]} />
                     <CheckOutlined hidden={!add2[index]} />
+                  </div> */}
+                    <button
+                      className=" btn btn-primary btn-md "
+                      style={{ fontSize: "15px" }}
+                      hidden={add2[index]}
+                      onClick={(e) => handleFollow(e, single, index)}
+                    >
+                      Add Friend
+                    </button>
+                    <button
+                      className="btn btn-primary btn-md "
+                      style={{ fontSize: "15px" }}
+                      hidden={!add2[index]}
+                      onClick={(e) => handleFollow(e, single, index)}
+                    >
+                      Request Sent
+                    </button>
                   </div>
-                  <div
-                    className="col-10 col-md-10 text-primary "
-                    style={{ fontSize: "20px" }}
-                    hidden={add2[index]}
-                  >
-                    Add Friend
-                  </div>
-                  <div
-                    className="col-10 col-md-10 text-primary "
-                    style={{ fontSize: "20px" }}
-                    hidden={!add2[index]}
-                  >
-                    Request Sent
+                  <div className="col-6 col-md-6 text-light">
+                    <button
+                      className="btn btn-warning btn-md ms-1"
+                      style={{ fontSize: "15px" }}
+                      onClick={(e) => viewProfile(e, single, index)}
+                    >
+                      View Profile
+                    </button>
                   </div>
                 </div>
               </label>
