@@ -20,6 +20,9 @@ const {
   unfollowPeople,
   searchUser,
   fetchPrivateProfile,
+  addInactive,
+  deleteInactive,
+  fetchActiveStatus,
 } = require("../controllers/auth");
 const { requireSignin, canUpdateProfile } = require("../Middlewares");
 const router = express.Router();
@@ -58,4 +61,7 @@ router.get("/find-following-all", requireSignin, findFollowingAll);
 router.put("/unfollow-people", requireSignin, canUpdateProfile, unfollowPeople);
 router.get("/search-user/:query", searchUser);
 router.get("/fetch-private-profile/:_id", requireSignin, fetchPrivateProfile);
+router.post("/add-inactive-time", requireSignin, addInactive);
+router.post("/delete-inactive-time", deleteInactive);
+router.get("/fetch-active-status/:_id", requireSignin, fetchActiveStatus);
 module.exports = router;

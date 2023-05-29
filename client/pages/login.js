@@ -86,6 +86,8 @@ function Login() {
           token: data.token,
         });
         window.localStorage.setItem("auth", JSON.stringify(data));
+        window.localStorage.setItem("active", JSON.stringify(data.user));
+
         toast.success(`welcome ${email}`);
       }
       setLoading(false);

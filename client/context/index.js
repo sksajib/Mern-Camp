@@ -9,9 +9,57 @@ const UserProvider = ({ children }) => {
     user: {},
     token: "",
   });
+  const [activeId, setActiveId] = useState({ user: {} });
+  const [active, setActive] = useState(null);
   useEffect(() => {
     setState(JSON.parse(window.localStorage.getItem("auth")));
+    setActiveId(JSON.parse(window.localStorage.getItem("active")));
   }, []);
+  useEffect(() => {
+    if (state != null) window.sessionStorage.setItem("auth", "active");
+    if (state == null) window.sessionStorage.removeItem("auth");
+  }, [state]);
+  useEffect(() => {
+    if (state != null) {
+      setActive(window.sessionStorage.getItem("auth"));
+    }
+
+    if (state == null) {
+      setActive(null);
+    }
+
+    console.log(active);
+  }, [active, setActive, state]);
+  // useEffect(() => {
+  //   console.log(active);
+  // }, [active]);
+  let id;
+
+  useEffect(() => {
+    const handleTabClose = (event) => {
+      id = state.user._id;
+      const data = axios.post("/add-inactive-time", { id });
+    };
+    const handleOffline = (event) => {
+      id = state.user._id;
+      window.location.reload();
+      const data = axios.post("/add-inactive-time", { id });
+    };
+    window.addEventListener("beforeunload", handleTabClose);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleTabClose);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [activeId, state]);
+  useEffect(() => {
+    if (state && state.user) {
+      id = state.user._id;
+      const data = axios.post("/delete-inactive-time", { id });
+    }
+  }, [state]);
+
   const token = state && state.token ? state.token : "";
   axios.defaults.baseURL = process.env.NEXT_PUBLIC_API;
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;

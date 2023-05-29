@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { UserContext } from "../context";
 import { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import {
   MessageOutlined,
   MessageTwoTone,
@@ -16,6 +17,7 @@ const Nav = () => {
   ///const channel = new BroadcastChannel("my-channel");
   let name = "";
   let name2 = "";
+  let id;
   if (state && state.user) {
     name = String(state.user.name);
     const [first, ...last] = name.split(" ");
@@ -48,6 +50,8 @@ const Nav = () => {
 
   const logout = () => {
     window.localStorage.removeItem("auth");
+    id = state.user._id;
+    const data = axios.post("/add-inactive-time", { id });
     setState(null);
     setCurrent(state);
     //console.log(current);
