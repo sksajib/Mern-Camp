@@ -45,12 +45,19 @@ const UserProvider = ({ children }) => {
       window.location.reload();
       const data = axios.post("/add-inactive-time", { id });
     };
+    const handleVisibility = (event) => {
+      if (document.visibilityState === "hidden") {
+        const data = axios.post("/add-inactive-time", { id });
+      }
+    };
     window.addEventListener("beforeunload", handleTabClose);
     window.addEventListener("offline", handleOffline);
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       window.removeEventListener("beforeunload", handleTabClose);
       window.removeEventListener("offline", handleOffline);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [activeId, state]);
   useEffect(() => {
