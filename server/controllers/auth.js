@@ -1219,12 +1219,29 @@ const deleteInactive = async (req, res) => {
 };
 const fetchActiveStatus = async (req, res) => {
   try {
-    const inactive = await InactiveTime.findOne({ createdBy: req.params._id });
-    if (inactive) {
-      return res.json(inactive);
+    const person1Id = req.auth._id;
+    const person1 = await User.findById(person1Id);
+    const person2Id = req.params._id;
+    const person2 = await User.findById(person2Id);
+    const following = person1.following;
+    let count = 0;
+
+    for (let i = 0; i < following.length; i++) {
+      if (following[i] == person2Id) {
+        count = 1;
+        const inactive = await InactiveTime.findOne({
+          createdBy: req.params._id,
+        });
+        if (inactive) {
+          return res.json(inactive);
+        }
+        if (!inactive) {
+          return res.send(null);
+        }
+      }
     }
-    if (!inactive) {
-      return res.send(null);
+    if (count === 0) {
+      return res.json({ ok: "notFollowing" });
     }
   } catch (err) {
     console.log(err);

@@ -53,11 +53,15 @@ const viewProfile = () => {
       const { data } = await axios.get(
         `/fetch-active-status/${router.query._id}`
       );
-      if (data) {
+      if (data && data.created) {
         setActive(data);
       }
       if (!data) {
         setActive(null);
+      }
+
+      if (data.ok == "notFollowing") {
+        setActive("notfollowing");
       }
     } catch (err) {
       console.log(err);
