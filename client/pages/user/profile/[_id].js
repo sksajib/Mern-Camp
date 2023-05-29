@@ -8,11 +8,13 @@ import { UserContext } from "../../../context";
 import PostList from "../../../components/cards/PostList";
 import { Pagination } from "antd";
 import { Avatar } from "antd";
+import moment from "moment";
 const viewProfile = () => {
   const router = useRouter();
   const id = router.query._id;
   const [state, setState] = useContext(UserContext);
   const [people, setPeople] = useState("");
+  const [active, setActive] = useState(null);
   const [posts, setPosts] = useState("");
   const [totalPosts, setTotalPosts] = useState(0);
   const [page, setPage] = useState(1);
@@ -25,6 +27,7 @@ const viewProfile = () => {
   }, [state, id]);
   useEffect(() => {
     state && state.token && id && fetchUser();
+    state && state.token && id && findStatus();
     state && state.token && id && fetchUserPosts();
     state && state.token && id && fetchTotalFriend();
   }, [state && state.token, id, page]);
@@ -41,6 +44,21 @@ const viewProfile = () => {
         `/fetch-private-profile/${router.query._id}`
       );
       setPeople(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const findStatus = async () => {
+    try {
+      const { data } = await axios.get(
+        `/fetch-active-status/${router.query._id}`
+      );
+      if (data) {
+        setActive(data);
+      }
+      if (!data) {
+        setActive(null);
+      }
     } catch (err) {
       console.log(err);
     }
@@ -88,6 +106,27 @@ const viewProfile = () => {
                     <div className="mt-2 text-primary h2 ms-2">
                       {people.name}
                     </div>
+                    {!active && (
+                      <div>
+                        <span className="h4 text-primary ms-1">Active now</span>
+                        <span
+                          style={{
+                            height: "10px",
+                            width: "10px",
+                            backgroundColor: "green",
+                            borderRadius: "50%",
+                            display: "inline-block",
+                          }}
+                          className="ms-1"
+                        ></span>
+                      </div>
+                    )}
+                    {active && active.created && (
+                      <div>
+                        <span className="h4 text-dark ms-1">Active </span>
+                        <span>{moment(active.created).fromNow()}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
 

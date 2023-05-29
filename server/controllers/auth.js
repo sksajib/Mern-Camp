@@ -1173,6 +1173,64 @@ const fetchPrivateProfile = async (req, res) => {
     return res.send(err);
   }
 };
+const InactiveTime = require("../Models/inactiveTime");
+const addInactive = async (req, res) => {
+  try {
+    const { id } = req.body;
+    console.log(id);
+
+    const data = await InactiveTime.findOne({ createdBy: id });
+    if (data) {
+      return res.json(data);
+    }
+    if (!data) {
+      const inactive = new InactiveTime({
+        createdBy: id,
+      });
+      try {
+        await inactive.save();
+        return res.json({ ok: true });
+      } catch (err) {
+        console.log(err);
+        return res.send(err);
+      }
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const deleteInactive = async (req, res) => {
+  try {
+    const { id } = req.body;
+
+    const inactive = await InactiveTime.findOne({ createdBy: id });
+    if (inactive) {
+      const inactiveId = inactive._id;
+      const data = await InactiveTime.findByIdAndDelete(inactiveId);
+      return res.send("ok");
+    } else {
+      return res.send("InActive not found");
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
+const fetchActiveStatus = async (req, res) => {
+  try {
+    const inactive = await InactiveTime.findOne({ createdBy: req.params._id });
+    if (inactive) {
+      return res.json(inactive);
+    }
+    if (!inactive) {
+      return res.send(null);
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
 module.exports = {
   sendOtp,
   register,
@@ -1193,4 +1251,7 @@ module.exports = {
   unfollowPeople,
   searchUser,
   fetchPrivateProfile,
+  addInactive,
+  deleteInactive,
+  fetchActiveStatus,
 };
