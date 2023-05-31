@@ -1177,7 +1177,6 @@ const InactiveTime = require("../Models/inactiveTime");
 const addInactive = async (req, res) => {
   try {
     const { id } = req.body;
-    console.log(id);
 
     const data = await InactiveTime.findOne({ createdBy: id });
     if (data) {
@@ -1248,6 +1247,56 @@ const fetchActiveStatus = async (req, res) => {
     return res.send(err);
   }
 };
+const findActiveFriends = async (req, res) => {
+  try {
+    const id = req.auth._id;
+    const user = await User.findById(id);
+    const following = user.following;
+    let inactive = [];
+    if (following.length > 0) {
+      for (let i = 0; i < following.length; i++) {
+        const inactivePerson = await InactiveTime.findOne({
+          createdBy: following[i],
+        });
+        if (inactivePerson) {
+          inactive.push(following[i]);
+        }
+      }
+      let activeFriendsId = [];
+      console.log(inactive);
+      console.log(following);
+      for (let i = 0; i < following.length; i++) {
+        let count = 0;
+        for (let j = 0; j < inactive.length; j++) {
+          if (following[i] == inactive[j]) {
+            count = 1;
+            break;
+          }
+        }
+        if (count == 0) {
+          activeFriendsId.push(following[i]);
+        }
+      }
+      console.log(activeFriendsId);
+      const activeFriends = await User.find({ _id: { $in: activeFriendsId } });
+      for (let i = 0; i < activeFriends.length; i++) {
+        activeFriends[i].email = undefined;
+        activeFriends[i].password = undefined;
+        activeFriends[i].following = undefined;
+        activeFriends[i].followers = undefined;
+        activeFriends[i].question = undefined;
+        activeFriends[i].secret = undefined;
+      }
+      console.log(activeFriends);
+      return res.json(activeFriends);
+    } else {
+      return res.json({ ok: "No friends" });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.send(err);
+  }
+};
 module.exports = {
   sendOtp,
   register,
@@ -1271,4 +1320,5 @@ module.exports = {
   addInactive,
   deleteInactive,
   fetchActiveStatus,
+  findActiveFriends,
 };

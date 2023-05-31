@@ -95,8 +95,8 @@ const Nav = () => {
           {state && state.token && (
             <>
               <div>
-                <Link href="/" className=" text-dark">
-                  <Avatar src="/images/message.png" size={52} className="dp" />
+                <Link href="/user/message" className=" text-dark">
+                  <Avatar src="/images/message.png" size={45} className="dp" />
                 </Link>
               </div>
 
