@@ -23,7 +23,6 @@ const message = () => {
       if (data && data.length > 0) {
         console.log(data.length);
         setActive(data);
-        toast.success("found");
         // toast.success(data[0].userName);
       }
 
@@ -42,9 +41,7 @@ const message = () => {
   if (state && state.token) {
     return (
       <UserRoute>
-        <div className="container container-fluid">
-          {<ActiveFriends active={active} />}
-        </div>
+        <div className="container ">{<ActiveFriends active={active} />}</div>
       </UserRoute>
     );
   }

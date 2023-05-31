@@ -109,6 +109,10 @@ nav {
   background-color: aquamarine;
   cursor: pointer;
 }
+.scrollbar {
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
 .scrollbar::-webkit-scrollbar {
   height: 4px;
   background-color: darkslategrey;
