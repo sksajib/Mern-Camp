@@ -6,7 +6,7 @@ const ActiveFriends = ({ active }) => {
       style={{ height: "50px", overflow: "scroll" }}
       className="scrollbar d-flex justify-content-start "
     >
-      {active !== null &&
+      {active &&
         active.length > 0 &&
         active.map((person) => (
           <div key={person._id} className="overflow-hidden">
