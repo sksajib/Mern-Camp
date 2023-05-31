@@ -115,7 +115,8 @@ nav {
 }
 
 .activeDot {
-  margin-left: 72%;
+  margin-left: 71%;
   margin-bottom: 40px;
   margin-top: -13px;
+  border: 1px solid rgb(252, 249, 249);
 }
