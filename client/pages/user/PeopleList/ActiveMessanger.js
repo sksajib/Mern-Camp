@@ -3,20 +3,20 @@ const ActiveFriends = ({ active }) => {
   console.log(active);
   return (
     <div
-      style={{ height: "50px", overflow: "scroll" }}
+      style={{ height: "50px", width: "100%" }}
       className="scrollbar d-flex justify-content-start "
     >
       {active &&
         active.length > 0 &&
         active.map((person) => (
-          <div key={person._id} className="overflow-hidden">
+          <div key={person._id}>
             <div className="activeAvatar d-inline z-2 position-relative">
               {!person.photo ? (
-                <Avatar size={40} className="mt-1 ms-1">
+                <Avatar size={40} className="mt-1 ">
                   {person.name.charAt(0)}
                 </Avatar>
               ) : (
-                <Avatar src={person.photo} size={40} className="mt-1 ms-1" />
+                <Avatar src={person.photo} size={40} className="mt-1 " />
               )}
             </div>
             <div
