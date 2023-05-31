@@ -109,3 +109,13 @@ nav {
   background-color: aquamarine;
   cursor: pointer;
 }
+.scrollbar::-webkit-scrollbar {
+  height: 4px;
+  background-color: darkslategrey;
+}
+
+.activeDot {
+  margin-left: 72%;
+  margin-bottom: 40px;
+  margin-top: -13px;
+}

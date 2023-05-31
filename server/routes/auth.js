@@ -23,6 +23,7 @@ const {
   addInactive,
   deleteInactive,
   fetchActiveStatus,
+  findActiveFriends,
 } = require("../controllers/auth");
 const { requireSignin, canUpdateProfile } = require("../Middlewares");
 const router = express.Router();
@@ -64,4 +65,5 @@ router.get("/fetch-private-profile/:_id", requireSignin, fetchPrivateProfile);
 router.post("/add-inactive-time", requireSignin, addInactive);
 router.post("/delete-inactive-time", deleteInactive);
 router.get("/fetch-active-status/:_id", requireSignin, fetchActiveStatus);
+router.get("/find-active-friends", requireSignin, findActiveFriends);
 module.exports = router;
